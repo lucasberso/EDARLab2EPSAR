@@ -49,7 +49,7 @@
                 </div>
                 <div style="margin-bottom: 8px; display: flex; align-items: flex-start;">
                     <span style="font-weight: bold; color: ${GO_AZUL_OSCURO}; margin-right: 10px;">2.</span>
-                    <span><b>Revisar</b> que los datos aparecen correctamente.</span>
+                    <span>Ejecutar <b>Ctrl + V</b> para la carga automática.</span>
                 </div>
                 <div style="margin-bottom: 0; display: flex; align-items: flex-start;">
                     <span style="font-weight: bold; color: ${GO_AZUL_OSCURO}; margin-right: 10px;">3.</span>
@@ -59,7 +59,7 @@
         </div>
         <div id="epsar-footer" style="background: #f5f7f9; padding: 10px 20px; font-size: 11px; color: #607d8b; text-align: center; border-top: 1px solid #cfd8dc; display: flex; justify-content: space-between; align-items: center;">
             <span id="epsar-status">Preparado para recibir datos</span>
-            <span style="font-size: 10px; color: ${GO_AZUL_OSCURO}; font-weight: 700; letter-spacing: 0.3px;">© LUCAS B.</span>
+            <span style="font-size: 10px; color: #607d8b; font-weight: 700; letter-spacing: 0.3px;">© LUCAS B.</span>
         </div>
     `;
     document.body.appendChild(ui);
