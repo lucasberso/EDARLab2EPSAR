@@ -42,12 +42,12 @@
         </div>
         <div style="padding: 20px;">
             <div style="margin-bottom: 15px; padding: 12px; background-color: ${GO_FONDO_SUAVE}; border-left: 5px solid ${GO_AZUL_CLARO}; border-radius: 4px;">
-                <span style="display: block; font-size: 10px; color: ${GO_AZUL_OSCURO}; text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px;">EDAR</span>
+                <span style="display: block; font-size: 10px; color: ${GO_AZUL_OSCURO}; text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px;">Unidad de Coste</span>
                 <span style="font-size: 15px; font-weight: 700; color: ${GO_AZUL_OSCURO};">${edarWebOrig}</span>
             </div>
             
             <div style="font-size: 13px; color: #444; line-height: 1.6;">
-                <b style="color: ${GO_AZUL_OSCURO}; display: block; margin-bottom: 8px; border-bottom: 2px solid ${GO_FONDO_SUAVE}; padding-bottom: 5px;">Procedimiento de Volcado:</b>
+                <b style="color: ${GO_AZUL_OSCURO}; display: block; margin-bottom: 8px; border-bottom: 2px solid ${GO_FONDO_SUAVE}; padding-bottom: 5px;">Instrucciones:</b>
                 <div style="margin-bottom: 8px; display: flex; align-items: flex-start;">
                     <span style="font-weight: bold; color: ${GO_AZUL_OSCURO}; margin-right: 10px;">1.</span>
                     <span><b>Copiar</b> todos los datos desde el Excel <b>Ctrl + C</b>.</span>
@@ -64,7 +64,7 @@
         </div>
         <div id="epsar-footer" style="background: #f5f7f9; padding: 10px 20px; font-size: 11px; color: #607d8b; text-align: center; border-top: 1px solid #cfd8dc; display: flex; justify-content: space-between; align-items: center;">
             <span id="epsar-status">Preparado para recibir datos</span>
-            <span style="font-size: 10px; color: #607d8b; font-weight: 700; letter-spacing: 0.3px;">© LUCAS B.</span>
+            <span style="font-size: 10px; color: #607d8b; font-weight: 700; letter-spacing: 0.3px;">© Lucas B.</span>
         </div>
     `;
     document.body.appendChild(ui);
