@@ -1,7 +1,7 @@
 (function() {
     'use strict';
 
-    // 1. LIMPIEZA DE INTERFAZ PREVIA
+    // 1. LIMPIEZA DE INTERFAZ PREVIA 1
     const existingUi = document.getElementById('epsar-asistente-ui');
     if (existingUi) existingUi.remove();
 
