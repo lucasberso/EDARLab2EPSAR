@@ -24,16 +24,21 @@
         backgroundColor: '#ffffff', color: '#333', borderRadius: '12px',
         zIndex: '10000', fontFamily: "'Segoe UI', Roboto, sans-serif",
         boxShadow: '0 15px 50px rgba(0,0,0,0.3)', border: `1px solid ${GO_AZUL_CLARO}`,
-        overflow: 'hidden', animation: 'fadeIn 0.3s ease-out'
+        overflow: 'hidden', animation: 'fadeIn 0.3s ease-out',
+        transition: 'opacity 0.3s ease'
     });
 
     const styleSheet = document.createElement("style");
-    styleSheet.innerText = "@keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }";
+    styleSheet.innerText = `
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        .close-btn-hover:hover { background-color: rgba(255,255,255,0.2); }
+    `;
     document.head.appendChild(styleSheet);
 
     ui.innerHTML = `
-        <div style="background: linear-gradient(90deg, ${GO_AZUL_OSCURO} 0%, ${GO_AZUL_CLARO} 100%); color: white; padding: 15px 20px; font-weight: bold; font-size: 16px; text-align: left;">
-            EDARLab ➔ EPSAR
+        <div style="background: linear-gradient(90deg, ${GO_AZUL_OSCURO} 0%, ${GO_AZUL_CLARO} 100%); color: white; padding: 15px 20px; font-weight: bold; font-size: 16px; display: flex; justify-content: space-between; align-items: center;">
+            <span>EDARLab ➔ EPSAR</span>
+            <span id="close-ui" class="close-btn-hover" style="cursor: pointer; padding: 0px 8px; border-radius: 4px; font-size: 22px; line-height: 1; transition: 0.2s;">&times;</span>
         </div>
         <div style="padding: 20px;">
             <div style="margin-bottom: 15px; padding: 12px; background-color: ${GO_FONDO_SUAVE}; border-left: 5px solid ${GO_AZUL_CLARO}; border-radius: 4px;">
@@ -63,6 +68,12 @@
         </div>
     `;
     document.body.appendChild(ui);
+
+    // FUNCIÓN PARA CERRAR EL CUADRO
+    document.getElementById('close-ui').onclick = function() {
+        ui.style.opacity = '0';
+        setTimeout(() => ui.remove(), 300);
+    };
 
     document.onpaste = function(event) {
         event.preventDefault();
@@ -149,6 +160,6 @@
         }
 
         status.innerHTML = `<span style="color: ${GO_AZUL_OSCURO}; font-weight: bold;">✅ ${count} registros cargados</span>`;
-        setTimeout(() => ui.remove(), 4000);
+        // He quitado el setTimeout para que el usuario pueda ver el resultado y cerrar el cuadro cuando quiera con la X.
     };
 })();
