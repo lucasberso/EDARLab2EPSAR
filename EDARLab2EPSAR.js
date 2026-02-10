@@ -1,165 +1,181 @@
 (function() {
-    'use strict';
+    "use strict";
 
-    // 1. LIMPIEZA DE INTERFAZ PREVIA 1
-    const existingUi = document.getElementById('epsar-asistente-ui');
-    if (existingUi) existingUi.remove();
+    // 1. CONFIGURACIÓN Y COLORES
+    const COLOR_OSCURO = "#004381";
+    const COLOR_CLARO = "#0097D7";
+    const COLOR_FONDO = "#F0F7FD";
 
-    // --- COLORES CORPORATIVOS GLOBAL OMNIUM ---
-    const GO_AZUL_OSCURO = '#004381';
-    const GO_AZUL_CLARO = '#0097D7';
-    const GO_FONDO_SUAVE = '#F0F7FD';
-    // ------------------------------------------
+    // 2. LIMPIEZA DE INTERFAZ PREVIA
+    const existingUi = document.getElementById("epsar-asistente-ui");
+    if (existingUi) {
+        document.onpaste = null;
+        existingUi.remove();
+    }
 
-    const edarSelector = document.getElementById('ctl00_ctl00_ContentPlaceHolder1_DropDownFiltroUnidadCoste');
-    const edarWebOrig = edarSelector ? edarSelector.options[edarSelector.selectedIndex].text.trim() : 'NO DETECTADA';
-    
-    const cleanStr = (str) => str.toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^A-Z0-9]/g, '').trim();
-    const edarWebClean = cleanStr(edarWebOrig);
+    // 3. DETECCIÓN DE LA EDAR SELECCIONADA EN LA WEB
+    const edarSelector = document.getElementById("ctl00_ctl00_ContentPlaceHolder1_DropDownFiltroUnidadCoste");
+    const edarWebOrig = edarSelector ? edarSelector.options[edarSelector.selectedIndex].text.trim() : "NO DETECTADA";
 
-    const ui = document.createElement('div');
-    ui.id = 'epsar-asistente-ui';
+    // Función de limpieza de strings (normalización)
+    const cl = e => e ? e.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^A-Z0-9]/g, "").trim() : "";
+    const cWeb = cl(edarWebOrig);
+
+    // 4. CREACIÓN DE LA INTERFAZ GRÁFICA (UI)
+    const ui = document.createElement("div");
+    ui.id = "epsar-asistente-ui";
     Object.assign(ui.style, {
-        position: 'fixed', top: '25px', right: '25px', width: '340px',
-        backgroundColor: '#ffffff', color: '#333', borderRadius: '12px',
-        zIndex: '10000', fontFamily: "'Segoe UI', Roboto, sans-serif",
-        boxShadow: '0 15px 50px rgba(0,0,0,0.3)', border: `1px solid ${GO_AZUL_CLARO}`,
-        overflow: 'hidden', animation: 'fadeIn 0.3s ease-out',
-        transition: 'opacity 0.3s ease'
+        position: "fixed", top: "25px", right: "25px", width: "340px",
+        backgroundColor: "#ffffff", color: "#333", borderRadius: "12px",
+        zIndex: "10000", fontFamily: "'Segoe UI', sans-serif",
+        boxShadow: "0 15px 50px rgba(0,0,0,0.2)", border: `1px solid ${COLOR_CLARO}`,
+        overflow: "hidden", animation: "fadeInUI 0.3s ease-out"
     });
 
     const styleSheet = document.createElement("style");
-    styleSheet.innerText = `
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-        .close-btn-hover:hover { background-color: rgba(255,255,255,0.2); }
-    `;
+    styleSheet.innerText = "@keyframes fadeInUI { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }";
     document.head.appendChild(styleSheet);
 
     ui.innerHTML = `
-        <div style="background: linear-gradient(90deg, ${GO_AZUL_OSCURO} 0%, ${GO_AZUL_CLARO} 100%); color: white; padding: 15px 20px; font-weight: bold; font-size: 16px; display: flex; justify-content: space-between; align-items: center;">
+        <div style="background:linear-gradient(90deg,${COLOR_OSCURO} 0%,${COLOR_CLARO} 100%);color:white;padding:15px 20px;font-weight:bold;font-size:16px;display:flex;justify-content:space-between;align-items:center">
             <span>EDARLab ➔ EPSAR</span>
-            <span id="close-ui" class="close-btn-hover" style="cursor: pointer; padding: 0px 8px; border-radius: 4px; font-size: 22px; line-height: 1; transition: 0.2s;">&times;</span>
+            <span id="close-ui" style="cursor:pointer;font-size:22px;line-height:1;opacity:0.8;transition:0.2s" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.8">×</span>
         </div>
-        <div style="padding: 20px;">
-            <div style="margin-bottom: 15px; padding: 12px; background-color: ${GO_FONDO_SUAVE}; border-left: 5px solid ${GO_AZUL_CLARO}; border-radius: 4px;">
-                <span style="display: block; font-size: 10px; color: ${GO_AZUL_OSCURO}; text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px;">Unidad de Coste</span>
-                <span style="font-size: 15px; font-weight: 700; color: ${GO_AZUL_OSCURO};">${edarWebOrig}</span>
+        <div style="padding:20px">
+            <div style="margin-bottom:15px;padding:12px;background-color:${COLOR_FONDO};border-left:5px solid ${COLOR_CLARO};border-radius:4px">
+                <span style="display:block;font-size:10px;color:${COLOR_OSCURO};text-transform:uppercase;font-weight:bold">EDAR</span>
+                <span style="font-size:15px;font-weight:700;color:${COLOR_OSCURO}">${edarWebOrig}</span>
             </div>
-            
-            <div style="font-size: 13px; color: #444; line-height: 1.6;">
-                <b style="color: ${GO_AZUL_OSCURO}; display: block; margin-bottom: 8px; border-bottom: 2px solid ${GO_FONDO_SUAVE}; padding-bottom: 5px;">Instrucciones:</b>
-                <div style="margin-bottom: 8px; display: flex; align-items: flex-start;">
-                    <span style="font-weight: bold; color: ${GO_AZUL_OSCURO}; margin-right: 10px;">1.</span>
-                    <span><b>Copiar</b> todos los datos desde el Excel <b>Ctrl + C</b>.</span>
-                </div>
-                <div style="margin-bottom: 8px; display: flex; align-items: flex-start;">
-                    <span style="font-weight: bold; color: ${GO_AZUL_OSCURO}; margin-right: 10px;">2.</span>
-                    <span>Ejecutar <b>Ctrl + V</b> para la carga automática.</span>
-                </div>
-                <div style="margin-bottom: 0; display: flex; align-items: flex-start;">
-                    <span style="font-weight: bold; color: ${GO_AZUL_OSCURO}; margin-right: 10px;">3.</span>
-                    <span><b>Revisar</b> que los datos aparecen correctamente.</span>
-                </div>
+            <div style="font-size:13px;color:#444;line-height:1.6;margin-bottom:15px">
+                <b style="color:${COLOR_OSCURO};display:block;margin-bottom:8px;border-bottom:2px solid ${COLOR_FONDO}">Instrucciones:</b>
+                <div style="display:flex;margin-bottom:8px"><b>1.&nbsp;</b><span>Copiar todo el archivo Excel <b>Ctrl+C</b>.</span></div>
+                <div style="display:flex;margin-bottom:8px"><b>2.&nbsp;</b><span>Pegar <b>Ctrl+V</b> en cualquier lugar.</span></div>
+                <div style="display:flex"><b>3.&nbsp;</b><span><b>Revisar</b> que los datos introducidos son correctos.</span></div>
             </div>
+            <button id="btn-clear" style="width:100%;padding:6px;background-color:transparent;border:1px solid #ccc;color:#888;border-radius:4px;cursor:pointer;font-size:11px;transition:0.2s">Borrar columnas permitidas</button>
         </div>
-        <div id="epsar-footer" style="background: #f5f7f9; padding: 10px 20px; font-size: 11px; color: #607d8b; text-align: center; border-top: 1px solid #cfd8dc; display: flex; justify-content: space-between; align-items: center;">
-            <span id="epsar-status">Preparado para recibir datos</span>
-            <span style="font-size: 10px; color: #607d8b; font-weight: 700; letter-spacing: 0.3px;">© Lucas B.</span>
-        </div>
-    `;
+        <div id="f-st" style="background:#f9f9fb;padding:10px 20px;font-size:11px;color:#607d8b;text-align:center;border-top:1px solid #eee;display:flex;justify-content:space-between">
+            <span id="msg-c">Listo</span>
+            <span style="font-size:10px;color:#607d8b;font-weight:700">© Lucas B.</span>
+        </div>`;
+
     document.body.appendChild(ui);
 
-    // FUNCIÓN PARA CERRAR EL CUADRO
-    document.getElementById('close-ui').onclick = function() {
-        ui.style.opacity = '0';
-        setTimeout(() => ui.remove(), 300);
+    // 5. MAPEO DE COLUMNAS WEB
+    const params = {
+        E: { PHEU:"ph", TURBIDEZEU:"tur", V60EU:"v60", SSEU:"ss", DBOEU:"dbo", DQOEU:"dqo", NTEU:"nt", PTEU:"pt" },
+        S: { PHS:"ph", CONDUCTIVIDAD:"con", TURBIDEZS:"tur", SSS:"ss", DBOS:"dbo", DQOS:"dqo", NTS:"nt", PTS:"pt" }
     };
 
+    // BOTÓN DE BORRADO SELECTIVO
+    const bClear = document.getElementById("btn-clear");
+    bClear.onmouseover = () => { bClear.style.borderColor = COLOR_CLARO; bClear.style.color = COLOR_CLARO; bClear.style.backgroundColor = COLOR_FONDO; };
+    bClear.onmouseout = () => { bClear.style.borderColor = "#ccc"; bClear.style.color = "#888"; bClear.style.backgroundColor = "transparent"; };
+    
+    bClear.onclick = function() {
+        let count = 0;
+        for (let d = 1; d <= 31; d++) {
+            ["E", "S"].forEach(pKey => {
+                Object.keys(params[pKey]).forEach(col => {
+                    const el = document.getElementById(`ctl00_ctl00_ContentPlaceHolder1_Contenido_CELDA_MA_DIA_${d}_COLUMNA_${col}_texto`);
+                    if (el) {
+                        el.value = "";
+                        el.style.backgroundColor = "#fff";
+                        el.dispatchEvent(new Event("change", { bubbles: true }));
+                        count++;
+                    }
+                });
+            });
+        }
+        document.getElementById("msg-c").innerHTML = `🗑️ Tabla borrada (${count} celdas)`;
+    };
+
+    // CERRAR UI Y DESACTIVAR EVENTO
+    document.getElementById("close-ui").onclick = () => {
+        document.onpaste = null;
+        ui.remove();
+    };
+
+    // 6. LÓGICA DE PEGADO (ONPASTE)
     document.onpaste = function(event) {
         event.preventDefault();
-        const status = document.getElementById('epsar-status');
-        const clipboardData = (event.clipboardData || window.clipboardData).getData('text');
-        const lines = clipboardData.split(/\r?\n/).filter(line => line.trim() !== "");
-        
-        if (lines.length < 2) {
-            status.innerHTML = "<span style='color: #d32f2f;'>Error: Portapapeles vacío</span>";
-            return;
-        }
+        const status = document.getElementById("msg-c");
+        const clipboard = (event.clipboardData || window.clipboardData).getData("text");
+        const rows = clipboard.split(/\r?\n/).map(row => row.split("\t"));
 
-        const headers = lines[0].split('\t').map(h => h.trim().toLowerCase());
-        const f = n => headers.indexOf(n.toLowerCase());
-        const idx = {
-            ph: f('pH (ud pH)'), pt: f('Pt (mg/l)'), nt: f('Nt (mg/l)'), ss: f('SS (mg/l)'), 
-            dqo: f('DQO (mg/l)'), dbo: f('DBO5 (mg/l)'), v60: f('V60 (mL/L)'), 
-            tur: f('Turbidez (UNT)'), con: f('Conductividad (µS/cm)')
+        if (rows.length < 2) return;
+
+        // Detectar índices de columnas en el Excel
+        const headers = rows[0].map(h => h.trim().toLowerCase());
+        const getIdx = s => headers.findIndex(h => h.includes(s.toLowerCase()));
+        const colMap = {
+            ph: getIdx("ph (ud ph)"), pt: getIdx("pt (mg/l)"), nt: getIdx("nt (mg/l)"),
+            ss: getIdx("ss (mg/l)"), dqo: getIdx("dqo (mg/l)"), dbo: getIdx("dbo5 (mg/l)"),
+            v60: getIdx("v60 (ml/l)"), tur: getIdx("turbidez"), con: getIdx("conductividad")
         };
 
-        let dataMap = {};
-        let currentPunto = "";
+        let dataStore = {};
+        let puntoActual = "";
         let isCorrectEdar = false;
-        let edarFoundName = "";
+        let foundEdarGlobal = false;
 
-        lines.forEach(line => {
-            const rawLine = line.trim();
-            const upperLine = rawLine.toUpperCase();
-            if (upperLine.includes('EDAR:')) {
-                const edarPart = rawLine.split(/EDAR:/i)[1].split('\t')[0].trim();
-                if (cleanStr(edarPart) === edarWebClean) {
-                    isCorrectEdar = true;
-                    edarFoundName = edarPart;
-                } else isCorrectEdar = false;
+        rows.forEach(row => {
+            const lineStr = row.join(" ").toUpperCase();
+
+            // Identificar la EDAR (Igualdad estricta tras limpieza)
+            if (lineStr.includes("EDAR:")) {
+                const edarIn = cl(row.find(c => c.toUpperCase().includes("EDAR:"))?.split(":")[1]);
+                isCorrectEdar = (edarIn === cWeb);
+                if (isCorrectEdar) foundEdarGlobal = true;
                 return;
             }
-            if (!isCorrectEdar) return;
-            if (upperLine.includes('PUNTO MUESTREO:')) {
-                const puntoPart = cleanStr(rawLine.split(':')[1].split('\t')[0]);
-                currentPunto = (puntoPart === 'E' || puntoPart === 'S') ? puntoPart : "";
-                return;
-            }
-            const parts = line.split('\t');
-            for (let i = 0; i < parts.length; i++) {
-                if (/^\d{2}\/\d{2}\//.test(parts[i].trim())) {
-                    const dia = parseInt(parts[i].trim().split('/')[0], 10);
-                    if (currentPunto && !isNaN(dia)) {
-                        dataMap[`${currentPunto}_${dia}`] = {
-                            ph: parts[idx.ph], pt: parts[idx.pt], nt: parts[idx.nt],
-                            ss: parts[idx.ss], dqo: parts[idx.dqo], dbo: parts[idx.dbo],
-                            v60: parts[idx.v60], tur: parts[idx.tur], con: parts[idx.con]
-                        };
-                    }
-                    break;
+
+            if (isCorrectEdar) {
+                // Identificar Punto de Muestreo (IDENTIFICACIÓN ESTRICTA E / S)
+                if (lineStr.includes("PUNTO MUESTREO:")) {
+                    const pIn = cl(row.find(c => c.toUpperCase().includes("PUNTO MUESTREO:"))?.split(":")[1]);
+                    puntoActual = (pIn === "E" || pIn === "S") ? pIn : "";
+                    return;
+                }
+
+                // Identificar fila de datos por fecha
+                const cellFecha = row.find(c => /^\d{2}\/\d{2}\//.test(c.trim()));
+                if (cellFecha && puntoActual) {
+                    const dia = parseInt(cellFecha.trim().split("/")[0], 10);
+                    dataStore[`${puntoActual}_${dia}`] = {
+                        ph: row[colMap.ph], pt: row[colMap.pt], nt: row[colMap.nt],
+                        ss: row[colMap.ss], dqo: row[colMap.dqo], dbo: row[colMap.dbo],
+                        v60: row[colMap.v60], tur: row[colMap.tur], con: row[colMap.con]
+                    };
                 }
             }
         });
 
-        if (!edarFoundName) {
-            status.innerHTML = "<span style='color: #d32f2f;'>Error: EDAR no detectada</span>";
-            alert(`Nombre de EDAR no coincidente con:\n${edarWebOrig}`);
+        if (!foundEdarGlobal) {
+            status.innerHTML = `<span style="color:#d32f2f;font-weight:bold">❌ EDAR no encontrada en Excel</span>`;
             return;
         }
 
-        const q = {
-            E: { PHEU:'ph', TURBIDEZEU:'tur', V60EU:'v60', SSEU:'ss', DBOEU:'dbo', DQOEU:'dqo', NTEU:'nt', PTEU:'pt' },
-            S: { PHS:'ph', CONDUCTIVIDAD:'con', TURBIDEZS:'tur', SSS:'ss', DBOS:'dbo', DQOS:'dqo', NTS:'nt', PTS:'pt' }
-        };
-
-        let count = 0;
+        // 7. VOLCADO A LA WEB
+        let volcados = 0;
         for (let d = 1; d <= 31; d++) {
-            ['E', 'S'].forEach(p => {
-                for (const [webKey, intKey] of Object.entries(q[p])) {
-                    const el = document.getElementById(`ctl00_ctl00_ContentPlaceHolder1_Contenido_CELDA_MA_DIA_${d}_COLUMNA_${webKey}_texto`);
-                    const val = dataMap[`${p}_${d}`] ? dataMap[`${p}_${d}`][intKey] : null;
-                    if (el && val && val.trim() !== "" && val.trim() !== "---") {
-                        el.value = val.trim().replace('.', ',');
-                        el.style.backgroundColor = GO_FONDO_SUAVE;
-                        el.dispatchEvent(new Event('change', { bubbles: true }));
-                        count++;
+            ["E", "S"].forEach(p => {
+                const diaData = dataStore[`${p}_${d}`];
+                if (diaData) {
+                    for (const [webCol, dataKey] of Object.entries(params[p])) {
+                        const input = document.getElementById(`ctl00_ctl00_ContentPlaceHolder1_Contenido_CELDA_MA_DIA_${d}_COLUMNA_${webCol}_texto`);
+                        const val = diaData[dataKey];
+                        if (input && val && val.trim() !== "" && val.trim() !== "---") {
+                            input.value = val.trim().replace(".", ",");
+                            input.style.backgroundColor = COLOR_FONDO;
+                            input.dispatchEvent(new Event("change", { bubbles: true }));
+                            volcados++;
+                        }
                     }
                 }
             });
         }
-
-        status.innerHTML = `<span style="color: ${GO_AZUL_OSCURO}; font-weight: bold;">✅ ${count} registros cargados</span>`;
-        // He quitado el setTimeout para que el usuario pueda ver el resultado y cerrar el cuadro cuando quiera con la X.
+        status.innerHTML = `✅ ${volcados} Celdas procesadas`;
     };
+
 })();
