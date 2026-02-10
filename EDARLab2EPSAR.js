@@ -1,10 +1,10 @@
 (function() {
     'use strict';
 
-    // 1. LIMPIEZA DE INTERFAZ PREVIA Y EVENTOS
+    // 1. LIMPIEZA DE INTERFAZ PREVIA Y RESET DE EVENTOS
     const existingUi = document.getElementById('epsar-asistente-ui');
     if (existingUi) {
-        document.onpaste = null;
+        document.onpaste = null; // Desactiva el pegado si ya existía una instancia
         existingUi.remove();
     }
 
@@ -12,9 +12,10 @@
     const GO_AZUL_OSCURO = '#004381';
     const GO_AZUL_CLARO = '#0097D7';
     const GO_FONDO_SUAVE = '#F0F7FD';
+    // ------------------------------------------
 
-    // Columnas permitidas para escritura y borrado
-    const q = {
+    // Diccionario de columnas permitidas (utilizado para carga y borrado)
+    const qPermitidas = {
         E: { PHEU:'ph', TURBIDEZEU:'tur', V60EU:'v60', SSEU:'ss', DBOEU:'dbo', DQOEU:'dqo', NTEU:'nt', PTEU:'pt' },
         S: { PHS:'ph', CONDUCTIVIDAD:'con', TURBIDEZS:'tur', SSS:'ss', DBOS:'dbo', DQOS:'dqo', NTS:'nt', PTS:'pt' }
     };
@@ -22,118 +23,175 @@
     const edarSelector = document.getElementById('ctl00_ctl00_ContentPlaceHolder1_DropDownFiltroUnidadCoste');
     const edarWebOrig = edarSelector ? edarSelector.options[edarSelector.selectedIndex].text.trim() : 'NO DETECTADA';
     
-    // Función de normalización compacta
-    const n = e => e ? e.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^A-Z0-9]/g,"").trim() : "";
-    const r = n(edarWebOrig);
+    const cleanStr = (str) => str.toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^A-Z0-9]/g, '').trim();
+    const edarWebClean = cleanStr(edarWebOrig);
 
     const ui = document.createElement('div');
     ui.id = 'epsar-asistente-ui';
     Object.assign(ui.style, {
         position: 'fixed', top: '25px', right: '25px', width: '340px',
         backgroundColor: '#ffffff', color: '#333', borderRadius: '12px',
-        zIndex: '10000', fontFamily: "'Segoe UI', sans-serif",
-        boxShadow: '0 15px 50px rgba(0,0,0,0.3)', border: `2px solid ${GO_AZUL_CLARO}`,
-        overflow: 'hidden', animation: 'fadeIn 0.3s ease-out'
+        zIndex: '10000', fontFamily: "'Segoe UI', Roboto, sans-serif",
+        boxShadow: '0 15px 50px rgba(0,0,0,0.3)', border: `1px solid ${GO_AZUL_CLARO}`,
+        overflow: 'hidden', animation: 'fadeIn 0.3s ease-out',
+        transition: 'opacity 0.3s ease'
     });
 
     const styleSheet = document.createElement("style");
     styleSheet.innerText = `
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-        .btn-clear:hover { background-color: ${GO_FONDO_SUAVE} !important; color: ${GO_AZUL_OSCURO} !important; border-color: ${GO_AZUL_OSCURO} !important; }
+        .close-btn-hover:hover { background-color: rgba(255,255,255,0.2); }
+        .btn-borrar:hover { background-color: #ffebee !important; color: #c62828 !important; border-color: #c62828 !important; }
     `;
     document.head.appendChild(styleSheet);
 
     ui.innerHTML = `
-        <div style="background: linear-gradient(90deg, ${GO_AZUL_OSCURO} 0%, ${GO_AZUL_CLARO} 100%); color: white; padding: 15px 20px; font-weight: bold; display: flex; justify-content: space-between; align-items: center;">
+        <div style="background: linear-gradient(90deg, ${GO_AZUL_OSCURO} 0%, ${GO_AZUL_CLARO} 100%); color: white; padding: 15px 20px; font-weight: bold; font-size: 16px; display: flex; justify-content: space-between; align-items: center;">
             <span>EDARLab ➔ EPSAR</span>
-            <span id="close-ui" style="cursor: pointer; font-size: 20px;">&times;</span>
+            <span id="close-ui" class="close-btn-hover" style="cursor: pointer; padding: 0px 8px; border-radius: 4px; font-size: 22px; line-height: 1; transition: 0.2s;">&times;</span>
         </div>
         <div style="padding: 20px;">
-            <div style="margin-bottom: 15px; padding: 10px; background: ${GO_FONDO_SUAVE}; border-left: 4px solid ${GO_AZUL_CLARO}; border-radius: 4px;">
-                <div style="font-size: 10px; font-weight: bold; color: ${GO_AZUL_OSCURO};">UNIDAD DE COSTE</div>
-                <div style="font-size: 14px; font-weight: bold;">${edarWebOrig}</div>
+            <div style="margin-bottom: 15px; padding: 12px; background-color: ${GO_FONDO_SUAVE}; border-left: 5px solid ${GO_AZUL_CLARO}; border-radius: 4px;">
+                <span style="display: block; font-size: 10px; color: ${GO_AZUL_OSCURO}; text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px;">Unidad de Coste</span>
+                <span style="font-size: 15px; font-weight: 700; color: ${GO_AZUL_OSCURO};">${edarWebOrig}</span>
             </div>
-            <div id="st" style="font-size: 12px; margin-bottom: 15px; color: #555;">Esperando Ctrl+V...</div>
-            <button id="btn-borrar" class="btn-clear" style="width: 100%; padding: 8px; background: transparent; border: 1px solid #ccc; color: #888; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: bold; transition: 0.2s;">
+            
+            <div style="font-size: 13px; color: #444; line-height: 1.6; margin-bottom: 20px;">
+                <b style="color: ${GO_AZUL_OSCURO}; display: block; margin-bottom: 8px; border-bottom: 2px solid ${GO_FONDO_SUAVE}; padding-bottom: 5px;">Instrucciones:</b>
+                <div style="margin-bottom: 8px; display: flex; align-items: flex-start;">
+                    <span style="font-weight: bold; color: ${GO_AZUL_OSCURO}; margin-right: 10px;">1.</span>
+                    <span>Copiar datos del Excel <b>(Ctrl+C)</b>.</span>
+                </div>
+                <div style="margin-bottom: 8px; display: flex; align-items: flex-start;">
+                    <span style="font-weight: bold; color: ${GO_AZUL_OSCURO}; margin-right: 10px;">2.</span>
+                    <span>Pegar en la web <b>(Ctrl+V)</b>.</span>
+                </div>
+            </div>
+
+            <button id="btn-borrar-datos" class="btn-borrar" style="width: 100%; padding: 10px; background-color: transparent; border: 1px solid #ccc; color: #888; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: bold; transition: 0.2s;">
                 🗑️ BORRAR COLUMNAS PERMITIDAS
             </button>
         </div>
-        <div style="background: #f9f9fb; padding: 10px 20px; font-size: 10px; color: #999; border-top: 1px solid #eee; display: flex; justify-content: space-between;">
-            <span>Listo</span><span>© Lucas B.</span>
+        <div id="epsar-footer" style="background: #f5f7f9; padding: 10px 20px; font-size: 11px; color: #607d8b; text-align: center; border-top: 1px solid #cfd8dc; display: flex; justify-content: space-between; align-items: center;">
+            <span id="epsar-status">Preparado</span>
+            <span style="font-size: 10px; color: #607d8b; font-weight: 700; letter-spacing: 0.3px;">© Lucas B.</span>
         </div>
     `;
     document.body.appendChild(ui);
 
-    // Cierre y parada
-    document.getElementById('close-ui').onclick = () => { document.onpaste = null; ui.remove(); };
-
-    // Borrado selectivo
-    document.getElementById('btn-borrar').onclick = () => {
-        if(!confirm("¿Borrar datos del mes en las columnas permitidas?")) return;
-        let c = 0;
-        for(let v=1; v<=31; v++) {
-            ['E','S'].forEach(p => {
-                Object.keys(q[p]).forEach(col => {
-                    const el = document.getElementById(`ctl00_ctl00_ContentPlaceHolder1_Contenido_CELDA_MA_DIA_${v}_COLUMNA_${col}_texto`);
-                    if(el) { el.value = ""; el.style.backgroundColor = "#fff"; el.dispatchEvent(new Event("change",{bubbles:!0})); c++; }
-                });
-            });
-        }
-        document.getElementById('st').innerHTML = `🗑️ ${c} celdas limpiadas`;
+    // FUNCIÓN PARA CERRAR Y DESACTIVAR PEGADO
+    document.getElementById('close-ui').onclick = function() {
+        document.onpaste = null; // Detiene la función de pegado global
+        ui.style.opacity = '0';
+        setTimeout(() => ui.remove(), 300);
     };
 
-    // Pegado con lógica de detección compacta (Inclusión)
-    document.onpaste = e => {
-        e.preventDefault();
-        const status = document.getElementById('st');
-        const text = (e.clipboardData || window.clipboardData).getData("text");
-        const lines = text.split(/\r?\n/).map(l => l.split("\t"));
-        if (lines.length < 2) return;
-
-        const h = lines[0].map(l => l.trim().toLowerCase());
-        const f = s => h.findIndex(x => x.includes(s.toLowerCase()));
-        const s = { ph:f("ph (ud ph)"), pt:f("pt (mg/l)"), nt:f("nt (mg/l)"), ss:f("ss (mg/l)"), dqo:f("dqo (mg/l)"), dbo:f("dbo5 (mg/l)"), v60:f("v60 (ml/l)"), tur:f("turbidez"), con:f("conductividad") };
-
-        let l = {}, d = "", u = !1;
-        lines.forEach(row => {
-            const rowTxt = row.join(" ").toUpperCase();
-            if (rowTxt.includes("EDAR:")) {
-                const edarIn = n(row.find(c => c.toUpperCase().includes("EDAR:"))?.split(":")[1]);
-                // Lógica compacta: Si el nombre de la web está contenido en el del Excel o viceversa
-                u = (edarIn.includes(r) || r.includes(edarIn)) && r !== "";
-                return;
-            }
-            if (u) {
-                if (rowTxt.includes("PUNTO MUESTREO:")) {
-                    const p = n(row.find(c => c.toUpperCase().includes("PUNTO MUESTREO:"))?.split(":")[1]);
-                    d = p.startsWith("E") ? "E" : p.startsWith("S") ? "S" : "";
-                    return;
-                }
-                const dateIdx = row.find(c => /^\d{2}\/\d{2}\//.test(c.trim()));
-                if (dateIdx && d) {
-                    const day = parseInt(dateIdx.trim().split("/")[0], 10);
-                    l[`${d}_${day}`] = { ph:row[s.ph], pt:row[s.pt], nt:row[s.nt], ss:row[s.ss], dqo:row[s.dqo], dbo:row[s.dbo], v60:row[s.v60], tur:row[s.tur], con:row[s.con] };
-                }
-            }
-        });
-
-        let count = 0;
-        for (let v=1; v<=31; v++) {
-            ['E','S'].forEach(p_idx => {
-                if (l[`${p_idx}_${v}`]) {
-                    for (const [webCol, intCol] of Object.entries(q[p_idx])) {
-                        const el = document.getElementById(`ctl00_ctl00_ContentPlaceHolder1_Contenido_CELDA_MA_DIA_${v}_COLUMNA_${webCol}_texto`);
-                        const val = l[`${p_idx}_${v}`][intCol];
-                        if (el && val && val.trim() !== "" && val.trim() !== "---") {
-                            el.value = val.trim().replace(".", ",");
-                            el.style.backgroundColor = GO_FONDO_SUAVE;
-                            el.dispatchEvent(new Event("change", { bubbles: true }));
-                            count++;
-                        }
+    // FUNCIÓN PARA BORRAR CELDAS PERMITIDAS
+    document.getElementById('btn-borrar-datos').onclick = function() {
+        if (!confirm("¿Deseas borrar todos los datos de las columnas permitidas para este mes?")) return;
+        
+        let borrados = 0;
+        for (let d = 1; d <= 31; d++) {
+            ['E', 'S'].forEach(p => {
+                for (const webKey of Object.keys(qPermitidas[p])) {
+                    const el = document.getElementById(`ctl00_ctl00_ContentPlaceHolder1_Contenido_CELDA_MA_DIA_${d}_COLUMNA_${webKey}_texto`);
+                    if (el && el.value !== "") {
+                        el.value = "";
+                        el.style.backgroundColor = "#ffffff";
+                        el.dispatchEvent(new Event('change', { bubbles: true }));
+                        borrados++;
                     }
                 }
             });
         }
-        status.innerHTML = count > 0 ? `✅ ${count} volcados con éxito` : "<span style='color:red'>❌ No se encontraron datos para esta EDAR</span>";
+        document.getElementById('epsar-status').innerText = `Limpieza completada (${borrados} celdas)`;
+    };
+
+    document.onpaste = function(event) {
+        event.preventDefault();
+        const status = document.getElementById('epsar-status');
+        const clipboardData = (event.clipboardData || window.clipboardData).getData('text');
+        
+        // Ajuste para el problema de los días en blanco: quitamos el filter inicial
+        const lines = clipboardData.split(/\r?\n/);
+        
+        if (lines.length < 2) {
+            status.innerHTML = "<span style='color: #d32f2f;'>Error: Portapapeles insuficiente</span>";
+            return;
+        }
+
+        const headers = lines[0].split('\t').map(h => h.trim().toLowerCase());
+        const f = n => headers.indexOf(n.toLowerCase());
+        const idx = {
+            ph: f('pH (ud pH)'), pt: f('Pt (mg/l)'), nt: f('Nt (mg/l)'), ss: f('SS (mg/l)'), 
+            dqo: f('DQO (mg/l)'), dbo: f('DBO5 (mg/l)'), v60: f('V60 (mL/L)'), 
+            tur: f('Turbidez (UNT)'), con: f('Conductividad (µS/cm)')
+        };
+
+        let dataMap = {};
+        let currentPunto = "";
+        let isCorrectEdar = false;
+        let edarFoundName = "";
+
+        lines.forEach(line => {
+            const rawLine = line.trim();
+            if (rawLine === "") return;
+            const upperLine = rawLine.toUpperCase();
+            
+            if (upperLine.includes('EDAR:')) {
+                const edarPart = rawLine.split(/EDAR:/i)[1].split('\t')[0].trim();
+                // Detección flexible corregida
+                const cleanIn = cleanStr(edarPart);
+                if (cleanIn.includes(edarWebClean) || edarWebClean.includes(cleanIn)) {
+                    isCorrectEdar = true;
+                    edarFoundName = edarPart;
+                } else isCorrectEdar = false;
+                return;
+            }
+            if (!isCorrectEdar) return;
+            if (upperLine.includes('PUNTO MUESTREO:')) {
+                const puntoPart = cleanStr(rawLine.split(':')[1].split('\t')[0]);
+                currentPunto = (puntoPart === 'E' || puntoPart === 'S') ? puntoPart : "";
+                return;
+            }
+            const parts = line.split('\t');
+            for (let i = 0; i < parts.length; i++) {
+                if (/^\d{2}\/\d{2}\//.test(parts[i].trim())) {
+                    const dia = parseInt(parts[i].trim().split('/')[0], 10);
+                    if (currentPunto && !isNaN(dia)) {
+                        dataMap[`${currentPunto}_${dia}`] = {
+                            ph: parts[idx.ph], pt: parts[idx.pt], nt: parts[idx.nt],
+                            ss: parts[idx.ss], dqo: parts[idx.dqo], dbo: parts[idx.dbo],
+                            v60: parts[idx.v60], tur: parts[idx.tur], con: parts[idx.con]
+                        };
+                    }
+                    break;
+                }
+            }
+        });
+
+        if (!edarFoundName) {
+            status.innerHTML = "<span style='color: #d32f2f;'>Error: Planta no coincide</span>";
+            alert(`Nombre detectado: ${edarFoundName || 'Ninguno'}\nSe esperaba algo similar a: ${edarWebOrig}`);
+            return;
+        }
+
+        let count = 0;
+        for (let d = 1; d <= 31; d++) {
+            ['E', 'S'].forEach(p => {
+                for (const [webKey, intKey] of Object.entries(qPermitidas[p])) {
+                    const el = document.getElementById(`ctl00_ctl00_ContentPlaceHolder1_Contenido_CELDA_MA_DIA_${d}_COLUMNA_${webKey}_texto`);
+                    const val = dataMap[`${p}_${d}`] ? dataMap[`${p}_${d}`][intKey] : null;
+                    if (el && val && val.trim() !== "" && val.trim() !== "---") {
+                        el.value = val.trim().replace('.', ',');
+                        el.style.backgroundColor = GO_FONDO_SUAVE;
+                        el.dispatchEvent(new Event('change', { bubbles: true }));
+                        count++;
+                    }
+                }
+            });
+        }
+
+        status.innerHTML = `<span style="color: ${GO_AZUL_OSCURO}; font-weight: bold;">✅ ${count} celdas cargadas</span>`;
     };
 })();
