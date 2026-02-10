@@ -1,24 +1,15 @@
 (function() {
     'use strict';
 
-    // 1. LIMPIEZA DE INTERFAZ PREVIA Y RESET DE EVENTOS
+    // 1. LIMPIEZA DE INTERFAZ PREVIA 1
     const existingUi = document.getElementById('epsar-asistente-ui');
-    if (existingUi) {
-        document.onpaste = null; // Desactiva el pegado si ya existía una instancia
-        existingUi.remove();
-    }
+    if (existingUi) existingUi.remove();
 
     // --- COLORES CORPORATIVOS GLOBAL OMNIUM ---
     const GO_AZUL_OSCURO = '#004381';
     const GO_AZUL_CLARO = '#0097D7';
     const GO_FONDO_SUAVE = '#F0F7FD';
     // ------------------------------------------
-
-    // Diccionario de columnas permitidas (utilizado para carga y borrado)
-    const qPermitidas = {
-        E: { PHEU:'ph', TURBIDEZEU:'tur', V60EU:'v60', SSEU:'ss', DBOEU:'dbo', DQOEU:'dqo', NTEU:'nt', PTEU:'pt' },
-        S: { PHS:'ph', CONDUCTIVIDAD:'con', TURBIDEZS:'tur', SSS:'ss', DBOS:'dbo', DQOS:'dqo', NTS:'nt', PTS:'pt' }
-    };
 
     const edarSelector = document.getElementById('ctl00_ctl00_ContentPlaceHolder1_DropDownFiltroUnidadCoste');
     const edarWebOrig = edarSelector ? edarSelector.options[edarSelector.selectedIndex].text.trim() : 'NO DETECTADA';
@@ -41,7 +32,6 @@
     styleSheet.innerText = `
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
         .close-btn-hover:hover { background-color: rgba(255,255,255,0.2); }
-        .btn-borrar:hover { background-color: #ffebee !important; color: #c62828 !important; border-color: #c62828 !important; }
     `;
     document.head.appendChild(styleSheet);
 
@@ -56,67 +46,43 @@
                 <span style="font-size: 15px; font-weight: 700; color: ${GO_AZUL_OSCURO};">${edarWebOrig}</span>
             </div>
             
-            <div style="font-size: 13px; color: #444; line-height: 1.6; margin-bottom: 20px;">
+            <div style="font-size: 13px; color: #444; line-height: 1.6;">
                 <b style="color: ${GO_AZUL_OSCURO}; display: block; margin-bottom: 8px; border-bottom: 2px solid ${GO_FONDO_SUAVE}; padding-bottom: 5px;">Instrucciones:</b>
                 <div style="margin-bottom: 8px; display: flex; align-items: flex-start;">
                     <span style="font-weight: bold; color: ${GO_AZUL_OSCURO}; margin-right: 10px;">1.</span>
-                    <span>Copiar datos del Excel <b>(Ctrl+C)</b>.</span>
+                    <span><b>Copiar</b> todos los datos desde el Excel <b>Ctrl + C</b>.</span>
                 </div>
                 <div style="margin-bottom: 8px; display: flex; align-items: flex-start;">
                     <span style="font-weight: bold; color: ${GO_AZUL_OSCURO}; margin-right: 10px;">2.</span>
-                    <span>Pegar en la web <b>(Ctrl+V)</b>.</span>
+                    <span>Ejecutar <b>Ctrl + V</b> para la carga automática.</span>
+                </div>
+                <div style="margin-bottom: 0; display: flex; align-items: flex-start;">
+                    <span style="font-weight: bold; color: ${GO_AZUL_OSCURO}; margin-right: 10px;">3.</span>
+                    <span><b>Revisar</b> que los datos aparecen correctamente.</span>
                 </div>
             </div>
-
-            <button id="btn-borrar-datos" class="btn-borrar" style="width: 100%; padding: 10px; background-color: transparent; border: 1px solid #ccc; color: #888; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: bold; transition: 0.2s;">
-                🗑️ BORRAR COLUMNAS PERMITIDAS
-            </button>
         </div>
         <div id="epsar-footer" style="background: #f5f7f9; padding: 10px 20px; font-size: 11px; color: #607d8b; text-align: center; border-top: 1px solid #cfd8dc; display: flex; justify-content: space-between; align-items: center;">
-            <span id="epsar-status">Preparado</span>
+            <span id="epsar-status">Preparado para recibir datos</span>
             <span style="font-size: 10px; color: #607d8b; font-weight: 700; letter-spacing: 0.3px;">© Lucas B.</span>
         </div>
     `;
     document.body.appendChild(ui);
 
-    // FUNCIÓN PARA CERRAR Y DESACTIVAR PEGADO
+    // FUNCIÓN PARA CERRAR EL CUADRO
     document.getElementById('close-ui').onclick = function() {
-        document.onpaste = null; // Detiene la función de pegado global
         ui.style.opacity = '0';
         setTimeout(() => ui.remove(), 300);
-    };
-
-    // FUNCIÓN PARA BORRAR CELDAS PERMITIDAS
-    document.getElementById('btn-borrar-datos').onclick = function() {
-        if (!confirm("¿Deseas borrar todos los datos de las columnas permitidas para este mes?")) return;
-        
-        let borrados = 0;
-        for (let d = 1; d <= 31; d++) {
-            ['E', 'S'].forEach(p => {
-                for (const webKey of Object.keys(qPermitidas[p])) {
-                    const el = document.getElementById(`ctl00_ctl00_ContentPlaceHolder1_Contenido_CELDA_MA_DIA_${d}_COLUMNA_${webKey}_texto`);
-                    if (el && el.value !== "") {
-                        el.value = "";
-                        el.style.backgroundColor = "#ffffff";
-                        el.dispatchEvent(new Event('change', { bubbles: true }));
-                        borrados++;
-                    }
-                }
-            });
-        }
-        document.getElementById('epsar-status').innerText = `Limpieza completada (${borrados} celdas)`;
     };
 
     document.onpaste = function(event) {
         event.preventDefault();
         const status = document.getElementById('epsar-status');
         const clipboardData = (event.clipboardData || window.clipboardData).getData('text');
-        
-        // Ajuste para el problema de los días en blanco: quitamos el filter inicial
-        const lines = clipboardData.split(/\r?\n/);
+        const lines = clipboardData.split(/\r?\n/).filter(line => line.trim() !== "");
         
         if (lines.length < 2) {
-            status.innerHTML = "<span style='color: #d32f2f;'>Error: Portapapeles insuficiente</span>";
+            status.innerHTML = "<span style='color: #d32f2f;'>Error: Portapapeles vacío</span>";
             return;
         }
 
@@ -135,14 +101,10 @@
 
         lines.forEach(line => {
             const rawLine = line.trim();
-            if (rawLine === "") return;
             const upperLine = rawLine.toUpperCase();
-            
             if (upperLine.includes('EDAR:')) {
                 const edarPart = rawLine.split(/EDAR:/i)[1].split('\t')[0].trim();
-                // Detección flexible corregida
-                const cleanIn = cleanStr(edarPart);
-                if (cleanIn.includes(edarWebClean) || edarWebClean.includes(cleanIn)) {
+                if (cleanStr(edarPart) === edarWebClean) {
                     isCorrectEdar = true;
                     edarFoundName = edarPart;
                 } else isCorrectEdar = false;
@@ -171,15 +133,20 @@
         });
 
         if (!edarFoundName) {
-            status.innerHTML = "<span style='color: #d32f2f;'>Error: Planta no coincide</span>";
-            alert(`Nombre detectado: ${edarFoundName || 'Ninguno'}\nSe esperaba algo similar a: ${edarWebOrig}`);
+            status.innerHTML = "<span style='color: #d32f2f;'>Error: EDAR no detectada</span>";
+            alert(`Nombre de EDAR no coincidente con:\n${edarWebOrig}`);
             return;
         }
+
+        const q = {
+            E: { PHEU:'ph', TURBIDEZEU:'tur', V60EU:'v60', SSEU:'ss', DBOEU:'dbo', DQOEU:'dqo', NTEU:'nt', PTEU:'pt' },
+            S: { PHS:'ph', CONDUCTIVIDAD:'con', TURBIDEZS:'tur', SSS:'ss', DBOS:'dbo', DQOS:'dqo', NTS:'nt', PTS:'pt' }
+        };
 
         let count = 0;
         for (let d = 1; d <= 31; d++) {
             ['E', 'S'].forEach(p => {
-                for (const [webKey, intKey] of Object.entries(qPermitidas[p])) {
+                for (const [webKey, intKey] of Object.entries(q[p])) {
                     const el = document.getElementById(`ctl00_ctl00_ContentPlaceHolder1_Contenido_CELDA_MA_DIA_${d}_COLUMNA_${webKey}_texto`);
                     const val = dataMap[`${p}_${d}`] ? dataMap[`${p}_${d}`][intKey] : null;
                     if (el && val && val.trim() !== "" && val.trim() !== "---") {
@@ -192,6 +159,7 @@
             });
         }
 
-        status.innerHTML = `<span style="color: ${GO_AZUL_OSCURO}; font-weight: bold;">✅ ${count} celdas cargadas</span>`;
+        status.innerHTML = `<span style="color: ${GO_AZUL_OSCURO}; font-weight: bold;">✅ ${count} registros cargados</span>`;
+        // He quitado el setTimeout para que el usuario pueda ver el resultado y cerrar el cuadro cuando quiera con la X.
     };
 })();
