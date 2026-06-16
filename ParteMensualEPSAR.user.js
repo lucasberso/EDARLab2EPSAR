@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Parte Mensual de Analítica - EDARLab➔EPSAR - GIT
-// @version      2.0
+// @version      3.0
 // @description  Herramienta que automatiza la introducción de partes de analíticas en el portal de la EPSAR.
 // @author       Lucas B.
 // @match        https://aplica.epsar.gva.es/depuradoras/Partes/MensualAnalitica.aspx*
@@ -153,6 +153,26 @@
     // Cada vez que la web se refresca por completo, la memoria RAM del navegador se borra.
     // Esta función se ejecuta automáticamente al nacer la nueva página para leer el "sessionStorage" y recordar qué estaba haciendo el script antes de la recarga y retomar la ejecución.
     function init() {
+
+        // --- ANTÍDOTO PARA POP-UPS DE ERROR ---
+        // Interceptamos el alert nativo para que no congele el navegador
+        window.alert = function(mensaje) {
+            console.warn(`[EDARLab➔Alerta Detectada] El servidor dice: ${mensaje}`);
+            
+            // Si el mensaje contiene palabras clave de error en los datos...
+            if (mensaje.toLowerCase().includes("no son correctos") || mensaje.toLowerCase().includes("error")) {
+                // Ejecutamos tu protocolo de parada segura para que no siga metiendo plantas
+                if (typeof abortarPorTablaInexistente === "function") {
+                    // Modificamos ligeramente el comportamiento para avisar del error real
+                    sessionStorage.removeItem("edar_automator_state");
+                    descargarReporteTxtFinal();
+                    limpiarYResetearTodoAZero();
+                    
+                    // Desactivamos temporalmente nuestro bloqueo para que el usuario pueda pulsar el alert real de JS si quedara algo
+                    alert(`La EPSAR ha rechazado los datos.\nMensaje web: ${mensaje}`);
+                }
+            }
+        };
         console.log("[EDARLab➔EPSAR] Recuperando estado de ejecución...");
         inyectarEstilosGlobales();
 
