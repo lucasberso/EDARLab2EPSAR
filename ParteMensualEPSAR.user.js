@@ -5,6 +5,9 @@
 // @author       Lucas B.
 // @match        https://aplica.epsar.gva.es/depuradoras/Partes/MensualAnalitica.aspx*
 // @grant        none
+// @downloadURL  https://github.com/lucasberso/EDARLab2EPSAR/raw/refs/heads/main/ParteMensualEPSAR.user.js
+// @updateURL    https://github.com/lucasberso/EDARLab2EPSAR/raw/refs/heads/main/ParteMensualEPSAR.user.js
+
 // ==/UserScript==
 
 (function() {
