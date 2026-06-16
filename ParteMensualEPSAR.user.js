@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         Parte Mensual de Analítica - EDARLab➔EPSAR
+// @name         Parte Mensual de Analítica - EDARLab➔EPSAR - GIT
 // @version      2.0
 // @description  Herramienta que automatiza la introducción de partes de analíticas en el portal de la EPSAR.
 // @author       Lucas B.
