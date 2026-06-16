@@ -19,8 +19,8 @@
     const CONFIG_PAUSAS = {
         // Pausas internas de escritura en tabla
         ENTRE_CARACTERES: () => 500 + Math.random() * 500, // Retraso aleatorio entre caracteres
-        POST_CELDA: () => 2000 + Math.random() * 4000,       // Retraso aleatorio tras desenfocar celda
-        POST_DIA_FILA: 4000 + Math.random() * 2000,                               // Pausa tras rellenar una fila diaria completa
+        POST_CELDA: () => 2000 + Math.random() * 5000,       // Retraso aleatorio tras desenfocar celda
+        POST_DIA_FILA: 4000 + Math.random() * 3000,                               // Pausa tras rellenar una fila diaria completa
 
         // Pausas de navegación y comunicación con el servidor
         APERTURA_DESPLEGABLE: 5000 + Math.random() * 3000,    // Espera tras hacer clic en el desplegable (Apertura)
