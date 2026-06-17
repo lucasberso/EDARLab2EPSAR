@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Parte Mensual de Analítica - EDARLab➔EPSAR - GIT
-// @version      3.1
+// @version      3.2
 // @description  Herramienta que automatiza la introducción de partes de analíticas en el portal de la EPSAR.
 // @author       Lucas B.
 // @match        https://aplica.epsar.gva.es/depuradoras/Partes/MensualAnalitica.aspx*
@@ -73,19 +73,23 @@
 
     // --- FUNCIÓN DE ESCRITURA POR CARACTERES EN TABLA ---
     const typeH = async(el, txt) => {
-        // 1. Inyección directa del valor completo (foco-proof)
+        /// 1. Forzamos el foco en el elemento antes de escribir
+        el.focus();
+        // 2. Inyección directa del valor completo (foco-proof)
         el.value = txt;
-        // 2. Avisamos que se ha introducido texto
+        // 3. Avisamos que se ha introducido texto
         el.dispatchEvent(new Event("input", { bubbles: true }));
+        // Disparamos el 'keyup' con el texto completo para que salte PuntosMiles()
+        el.dispatchEvent(new KeyboardEvent('keyup', { key: 'ArrowRight', bubbles: true }));
         // Pequeña pausa de seguridad antes de salir de la celda
         await new Promise(r => setTimeout(r, 100 + Math.random() * 50)); // ~100ms
-        // 3. Quitamos el foco (Esto hace que la web aplique sus formatos internos)
+        el.dispatchEvent(new Event("change", { bubbles: true }));
+        await new Promise(r => setTimeout(r, 50)); // Brevísimo respiro para ASP.NET
+        // 5. Quitamos el foco (Esto hace que la web ejecute calculaValoresRIRU)
         el.dispatchEvent(new Event("blur", { bubbles: true }));
         await new Promise(r => setTimeout(r, 100 + Math.random() * 50));
-        // 4. Disparamos el 'change' justo después del blur, imitando al navegador nativo
-        el.dispatchEvent(new Event("change", { bubbles: true }));
-        // 5. Pausa dinámica al terminar la celda.
-        await new Promise(r => setTimeout(r, CONFIG_PAUSAS.POST_CELDA()));
+        // 6. Pausa dinámica al terminar la celda.
+        await new Promise(r => setTimeout(r, CONFIG_PAUSAS.POST_CELDA()))
     };
 
     // --- FUNCIÓN DE ESCRITURA POR CARACTERES EN TABLA ---
