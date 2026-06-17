@@ -643,7 +643,7 @@
                                 // Si la celda ya tiene un valor y NO queremos sobreescribir, saltamos a la siguiente
                                 if (elCell.value.trim() !== "" && !modoSobreescribir) {
                                     console.log(`[EDARLab] Celda día ${day} - Columna ${k} ya tiene datos. Saltando celda.`);
-                                    await delay(CONFIG_PAUSAS.POST_CELDA());
+                                    await delay(1000 + Math.random() * 500);
                                     estado.celdasYaTipeadasAcumuladas++;
                                     const subPorcentaje = Math.round((estado.celdasYaTipeadasAcumuladas / estado.totalCeldasGlobales) * 100);
                                     document.getElementById("rb-barra").style.width = `${subPorcentaje}%`;
