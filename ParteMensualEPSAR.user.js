@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Parte Mensual de Analítica - EDARLab➔EPSAR - GIT
-// @version      3.6
+// @version      3.7
 // @description  Herramienta que automatiza la introducción de partes de analíticas en el portal de la EPSAR.
 // @author       Lucas B.
 // @match        https://aplica.epsar.gva.es/depuradoras/Partes/MensualAnalitica.aspx*
@@ -74,13 +74,23 @@
     // --- FUNCIÓN DE ESCRITURA POR CARACTERES EN TABLA ---
     const typeH = async(el, txt) => {
         /// 1. Forzamos el foco en el elemento antes de escribir
+        el.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+        el.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
         el.focus();
+        // El clic físico desencadena de forma orgánica el foco en el navegador
+        el.dispatchEvent(new FocusEvent('focus', { bubbles: true }));
+        el.focus(); // Consolidamos el foco en el DOM de forma nativa
+        el.dispatchEvent(new MouseEvent('click', { bubbles: true })); // Evento final del ratón
+
+        // EL INICIO DE LA ESCRITURA: Baja el dedo en la primera tecla
+        const primeraTecla = txt[0] || '';
+        el.dispatchEvent(new KeyboardEvent('keydown', { key: primeraTecla, bubbles: true }));
         // 2. Inyección directa del valor completo (foco-proof)
         el.value = txt;
         // 3. Avisamos que se ha introducido texto
         el.dispatchEvent(new Event("input", { bubbles: true }));
         // Disparamos el 'keyup' con el texto completo para que salte PuntosMiles()
-        el.dispatchEvent(new KeyboardEvent('keyup', { key: 'ArrowRight', bubbles: true }));
+        el.dispatchEvent(new KeyboardEvent('keyup', { key: primeraTecla, bubbles: true }));
         // Pequeña pausa de seguridad antes de salir de la celda
         await new Promise(r => setTimeout(r, 100 + Math.random() * 50)); // ~100ms
         el.dispatchEvent(new Event("change", { bubbles: true }));
