@@ -17,7 +17,7 @@
     // --- TABLA DE CONFIGURACIÓN DE PAUSAS ---
     // =========================================================================
     const diaDelMes = new Date().getDate();
-    const FACTOR_SATURACION = (diaDelMes >= 1 && diaDelMes <= 4) ? 1.25 : 1.0;
+    const FACTOR_SATURACION = (diaDelMes >= 1 && diaDelMes <= 4) ? 1.5 : 1.5;
 
     console.log(`[EDARLab➔EPSAR] Día del mes: ${diaDelMes}. Factor de retraso aplicado: x${FACTOR_SATURACION}`);
     const CONFIG_PAUSAS = {
