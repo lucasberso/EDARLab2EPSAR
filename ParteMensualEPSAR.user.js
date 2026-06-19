@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Parte Mensual de Analítica - EDARLab➔EPSAR - GIT
-// @version      4.0
+// @version      4.1
 // @description  Herramienta que automatiza la introducción de partes de analíticas en el portal de la EPSAR.
 // @author       Lucas B.
 // @match        https://aplica.epsar.gva.es/depuradoras/Partes/MensualAnalitica.aspx*
@@ -33,7 +33,7 @@
         RENDERIZADO_TABLA: (14000 + Math.random() * 5000) * FACTOR_SATURACION,      // Espera tras pulsar 'Mostrar' para que se dibuje la nueva tabla
         PRE_RECALCULA: 6000 + Math.random() * 4000,           // Espera tras escribir el último dato y antes de pulsar 'Recalcula'
         POST_RECALCULA: (6000 + Math.random() * 4000) * FACTOR_SATURACION,         // Espera tras el refresco de página provocado por 'Recalcula'
-        TRANSICION_PLANTA: (6000 + Math.random() * 4000) * FACTOR_SATURACION        // Espera informativa en ventana antes de saltar a la siguiente EDAR
+        TRANSICION_PLANTA: (5000 + Math.random() * 4000) * FACTOR_SATURACION        // Espera informativa en ventana antes de saltar a la siguiente EDAR
         
     };
 
@@ -759,10 +759,11 @@
             currentLog += `[${fechaPlanta}] Completado: EDAR ${candActualPost.nameExcel} (Asociada Web: ${nombreWebActualPost}) | Celdas rellenadas: ${celdasReales}\n`;
             currentLog += `--------------------------------------------------\n\n`;
             sessionStorage.setItem("edarlab_txt_log_accumulator", currentLog);
-            await new Promise(r => setTimeout(r, CONFIG_PAUSAS.POST_GUARDADO()));
             // Pausa dinámica: cambio estético de ciclo
             document.getElementById("tx-progreso-detalle").innerText = "Parte procesado con éxito...";
             await delay(CONFIG_PAUSAS.TRANSICION_PLANTA);
+            await new Promise(r => setTimeout(r, CONFIG_PAUSAS.PAUSA_ENTRE_PLANTAS()));
+            document.getElementById("tx-progreso-detalle").innerText = "Pausa entre partes...";
 
             estado.indiceBucleActual++;
             estado.contadorCompletadas++;
