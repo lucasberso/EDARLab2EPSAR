@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Parte Mensual de Analítica - EDARLab➔EPSAR - GIT
-// @version      3.8
+// @version      4.0
 // @description  Herramienta que automatiza la introducción de partes de analíticas en el portal de la EPSAR.
 // @author       Lucas B.
 // @match        https://aplica.epsar.gva.es/depuradoras/Partes/MensualAnalitica.aspx*
@@ -17,13 +17,14 @@
     // --- TABLA DE CONFIGURACIÓN DE PAUSAS ---
     // =========================================================================
     const diaDelMes = new Date().getDate();
-    const FACTOR_SATURACION = (diaDelMes >= 1 && diaDelMes <= 4) ? 1.50 : 1.25;
+    const FACTOR_SATURACION = (diaDelMes >= 1 && diaDelMes <= 4) ? 1.50 : 1.2;
 
     console.log(`[EDARLab➔EPSAR] Día del mes: ${diaDelMes}. Factor de retraso aplicado: x${FACTOR_SATURACION}`);
     const CONFIG_PAUSAS = {
         // Pausas internas de escritura en tabla
         ENTRE_CARACTERES: () => (500 + Math.random() * 500) * FACTOR_SATURACION, // Retraso aleatorio entre caracteres
-        POST_CELDA: () => (3000 + Math.random() * 4000) * FACTOR_SATURACION, // Retraso aleatorio tras desenfocar celda
+        POST_CELDA: () => (2000 + Math.random() * 4000) * FACTOR_SATURACION, // Retraso aleatorio tras desenfocar celda
+        PAUSA_ENTRE_PLANTAS: () => (10000 + Math.random() * 20000),
         POST_DIA_FILA: (4000 + Math.random() * 3000) * FACTOR_SATURACION,  // Pausa tras rellenar una fila diaria completa
 
         // Pausas de navegación y comunicación con el servidor
@@ -31,8 +32,9 @@
         ASIMILACION_DESPLEGABLE: 5000 + Math.random() * 1000, // Espera para que la web asimile de forma pasiva la planta elegida
         RENDERIZADO_TABLA: (14000 + Math.random() * 5000) * FACTOR_SATURACION,      // Espera tras pulsar 'Mostrar' para que se dibuje la nueva tabla
         PRE_RECALCULA: 6000 + Math.random() * 4000,           // Espera tras escribir el último dato y antes de pulsar 'Recalcula'
-        POST_RECALCULA: (14000 + Math.random() * 4000) * FACTOR_SATURACION,         // Espera tras el refresco de página provocado por 'Recalcula'
+        POST_RECALCULA: (6000 + Math.random() * 4000) * FACTOR_SATURACION,         // Espera tras el refresco de página provocado por 'Recalcula'
         TRANSICION_PLANTA: (6000 + Math.random() * 4000) * FACTOR_SATURACION        // Espera informativa en ventana antes de saltar a la siguiente EDAR
+        
     };
 
     // --- CONFIGURACIÓN DE COLORES E INTERFAZ ---
@@ -112,17 +114,12 @@
         // ⏳ Brevísimo respiro de cortesía para amortiguar scripts antes de salir
         await new Promise(r => setTimeout(r, 50)); 
         
-        // Desencadena la pesada función calculaValoresRIRU() de la EPSAR
         el.dispatchEvent(new Event("blur", { bubbles: true }));
         el.blur(); // Sacamos físicamente el cursor del navegador de esta celda
         
         // ⏳ Pausa de seguridad para que la web termine los sumatorios de la fila
         await new Promise(r => setTimeout(r, 100 + Math.random() * 50));
         
-        // =========================================================================
-        // 4. PROTECCIÓN PERIMETRAL (Escudo definitivo contra el Error 403)
-        // =========================================================================
-        // Tu pausa dinámica configurada en la tabla superior
         await new Promise(r => setTimeout(r, CONFIG_PAUSAS.POST_CELDA()));
     };
 
@@ -762,7 +759,7 @@
             currentLog += `[${fechaPlanta}] Completado: EDAR ${candActualPost.nameExcel} (Asociada Web: ${nombreWebActualPost}) | Celdas rellenadas: ${celdasReales}\n`;
             currentLog += `--------------------------------------------------\n\n`;
             sessionStorage.setItem("edarlab_txt_log_accumulator", currentLog);
-
+            await new Promise(r => setTimeout(r, CONFIG_PAUSAS.POST_GUARDADO()));
             // Pausa dinámica: cambio estético de ciclo
             document.getElementById("tx-progreso-detalle").innerText = "Parte procesado con éxito...";
             await delay(CONFIG_PAUSAS.TRANSICION_PLANTA);
