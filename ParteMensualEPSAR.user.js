@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Parte Mensual de Analítica - EDARLab➔EPSAR - GIT
-// @version      3.7
+// @version      3.8
 // @description  Herramienta que automatiza la introducción de partes de analíticas en el portal de la EPSAR.
 // @author       Lucas B.
 // @match        https://aplica.epsar.gva.es/depuradoras/Partes/MensualAnalitica.aspx*
@@ -73,33 +73,57 @@
 
     // --- FUNCIÓN DE ESCRITURA POR CARACTERES EN TABLA ---
     const typeH = async(el, txt) => {
-        /// 1. Forzamos el foco en el elemento antes de escribir
         el.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
         el.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
-        el.focus();
-        // El clic físico desencadena de forma orgánica el foco en el navegador
+        
+        // El navegador genera orgánicamente el evento de foco
         el.dispatchEvent(new FocusEvent('focus', { bubbles: true }));
-        el.focus(); // Consolidamos el foco en el DOM de forma nativa
-        el.dispatchEvent(new MouseEvent('click', { bubbles: true })); // Evento final del ratón
-
-        // EL INICIO DE LA ESCRITURA: Baja el dedo en la primera tecla
+        el.focus(); // Consolidamos el foco real en el navegador
+        
+        // Evento final del clic del ratón
+        el.dispatchEvent(new MouseEvent('click', { bubbles: true })); 
+    
+        // =========================================================================
+        // 2. LA ESCRITURA (Prepara los validadores locales de ASP.NET)
+        // =========================================================================
         const primeraTecla = txt[0] || '';
+        
+        // Dispara 'moverFoco'. Al ser un número, el script pasa de largo de forma segura
         el.dispatchEvent(new KeyboardEvent('keydown', { key: primeraTecla, bubbles: true }));
-        // 2. Inyección directa del valor completo (foco-proof)
+        
+        // Inyección directa y segura del bloque completo (Inmune a clics externos)
         el.value = txt;
-        // 3. Avisamos que se ha introducido texto
+        
+        // Notificamos al árbol HTML que el texto de la celda ha cambiado
         el.dispatchEvent(new Event("input", { bubbles: true }));
-        // Disparamos el 'keyup' con el texto completo para que salte PuntosMiles()
+        
+        // Cierre simétrico de la tecla. Aquí la EPSAR ejecuta PuntosMiles() sobre el texto completo
         el.dispatchEvent(new KeyboardEvent('keyup', { key: primeraTecla, bubbles: true }));
-        // Pequeña pausa de seguridad antes de salir de la celda
-        await new Promise(r => setTimeout(r, 100 + Math.random() * 50)); // ~100ms
+        
+        // ⏳ Pausa de asentamiento: Damos ~100ms para que PuntosMiles() formatee el número
+        await new Promise(r => setTimeout(r, 100 + Math.random() * 50)); 
+        
+        // =========================================================================
+        // 3. EL CIERRE Y DESENFOQUE (Guarda el dato local y dispara operaciones)
+        // =========================================================================
+        // Le dice a ASP.NET: "El valor final de este campo ha cambiado formalmente"
         el.dispatchEvent(new Event("change", { bubbles: true }));
-        await new Promise(r => setTimeout(r, 50)); // Brevísimo respiro para ASP.NET
-        // 5. Quitamos el foco (Esto hace que la web ejecute calculaValoresRIRU)
+        
+        // ⏳ Brevísimo respiro de cortesía para amortiguar scripts antes de salir
+        await new Promise(r => setTimeout(r, 50)); 
+        
+        // Desencadena la pesada función calculaValoresRIRU() de la EPSAR
         el.dispatchEvent(new Event("blur", { bubbles: true }));
+        el.blur(); // Sacamos físicamente el cursor del navegador de esta celda
+        
+        // ⏳ Pausa de seguridad para que la web termine los sumatorios de la fila
         await new Promise(r => setTimeout(r, 100 + Math.random() * 50));
-        // 6. Pausa dinámica al terminar la celda.
-        await new Promise(r => setTimeout(r, CONFIG_PAUSAS.POST_CELDA()))
+        
+        // =========================================================================
+        // 4. PROTECCIÓN PERIMETRAL (Escudo definitivo contra el Error 403)
+        // =========================================================================
+        // Tu pausa dinámica configurada en la tabla superior
+        await new Promise(r => setTimeout(r, CONFIG_PAUSAS.POST_CELDA()));
     };
 
     // --- FUNCIÓN DE ESCRITURA POR CARACTERES EN TABLA ---
