@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Parte Mensual de Analítica - EDARLab➔EPSAR - GIT
-// @version      4.1
+// @version      4.2
 // @description  Herramienta que automatiza la introducción de partes de analíticas en el portal de la EPSAR.
 // @author       Lucas B.
 // @match        https://aplica.epsar.gva.es/depuradoras/Partes/MensualAnalitica.aspx*
@@ -762,8 +762,8 @@
             // Pausa dinámica: cambio estético de ciclo
             document.getElementById("tx-progreso-detalle").innerText = "Parte procesado con éxito...";
             await delay(CONFIG_PAUSAS.TRANSICION_PLANTA);
-            await new Promise(r => setTimeout(r, CONFIG_PAUSAS.PAUSA_ENTRE_PLANTAS()));
             document.getElementById("tx-progreso-detalle").innerText = "Pausa entre partes...";
+            await new Promise(r => setTimeout(r, CONFIG_PAUSAS.PAUSA_ENTRE_PLANTAS()));
 
             estado.indiceBucleActual++;
             estado.contadorCompletadas++;
