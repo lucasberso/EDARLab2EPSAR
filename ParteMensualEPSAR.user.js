@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Parte Mensual de Analítica - EDARLab➔EPSAR - GIT
-// @version      4.3
+// @version      4.4
 // @description  Herramienta que automatiza la introducción de partes de analíticas en el portal de la EPSAR.
 // @author       Lucas B.
 // @match        https://aplica.epsar.gva.es/depuradoras/Partes/MensualAnalitica.aspx*
@@ -191,6 +191,7 @@
     // Cada vez que la web se refresca por completo, la memoria RAM del navegador se borra.
     // Esta función se ejecuta automáticamente al nacer la nueva página para leer el "sessionStorage" y recordar qué estaba haciendo el script antes de la recarga y retomar la ejecución.
     function init() {
+        await delay(2000);
         console.log("[EDARLab➔EPSAR] Recuperando estado de ejecución...");
         inyectarEstilosGlobales();
 
@@ -726,7 +727,7 @@
             estado.pasoActual = "POST_RECALCULA_ESPERA";
         }
 
-        // --- ESTADO C: POST-RECALCULA Y TRANSCISIÓN A SIGUIENTE PLANTA ---
+        // --- ESTADO C: POST-RECALCULA Y TRANSICIÓN A SIGUIENTE PLANTA ---
         if (estado.pasoActual === "POST_RECALCULA_ESPERA") {
             // Pausa dinámica: post-recalcula
 
@@ -766,8 +767,12 @@
             estado.contadorCompletadas++;
             estado.pasoActual = "PREPARAR_FILTRADO";
             sessionStorage.setItem("edar_automator_state", JSON.stringify(estado));
-
-            ejecutarMaquinaEstados(estado);
+            
+            // ejecutarMaquinaEstados(estado);
+            await delay(100 + Math.random() * 100);
+            console.log("[EDARLab] Ejecutando F5 para vaciar buffer de IIS.");
+            window.location.href = "https://aplica.epsar.gva.es/depuradoras/Partes/MensualAnalitica.aspx";
+            return;
         }
     }
 
