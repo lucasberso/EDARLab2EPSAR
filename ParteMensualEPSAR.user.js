@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Parte Mensual de Analítica - EDARLab➔EPSAR - GIT
-// @version      4.6
+// @version      4.7
 // @description  Herramienta que automatiza la introducción de partes de analíticas en el portal de la EPSAR.
 // @author       Lucas B.
 // @match        https://aplica.epsar.gva.es/depuradoras/Partes/MensualAnalitica.aspx*
@@ -212,8 +212,8 @@
                 limpiarYResetearTodoAZero();
                 return;
             }
-            console.log("[EDARLab] Esperando 2 segundos para la estabilización de scripts de IIS...");
-            await delay(2000); // <- Pausa obligatoria para que ASP.NET se inicialice por completo
+            //console.log("[EDARLab] Esperando 2 segundos para la estabilización de scripts de IIS...");
+            //await delay(2000); // <- Pausa obligatoria para que ASP.NET se inicialice por completo
             //if (window.EDARLab_Buffer.length > 0 && estado.indiceBucleActual < window.EDARLab_Buffer.length) {
                 //const plantaActualNombreWeb = window.EDARLab_Buffer[estado.indiceBucleActual].nameWebAsociada;
                 //const desplegableWeb = document.getElementById("ctl00_ctl00_ContentPlaceHolder1_DropDownFiltroUnidadCoste");
