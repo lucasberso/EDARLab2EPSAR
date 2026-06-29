@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Parte Mensual de Analítica - EDARLab➔EPSAR - GIT
-// @version      5.1
+// @version      5.2
 // @description  Herramienta que automatiza la introducción de partes de analíticas en el portal de la EPSAR.
 // @author       Lucas B.
 // @match        https://aplica.epsar.gva.es/depuradoras/Partes/MensualAnalitica.aspx*
@@ -17,7 +17,7 @@
     // --- TABLA DE CONFIGURACIÓN DE PAUSAS ---
     // =========================================================================
     const diaDelMes = new Date().getDate();
-    const FACTOR_SATURACION = (diaDelMes >= 1 && diaDelMes <= 4) ? 1.50 : 1.10;
+    const FACTOR_SATURACION = (diaDelMes >= 1 && diaDelMes <= 4) ? 1.50 : 1.25;
 
     console.log(`[EDARLab➔EPSAR] Día del mes: ${diaDelMes}. Factor de retraso aplicado: x${FACTOR_SATURACION}`);
     const CONFIG_PAUSAS = {
@@ -28,10 +28,10 @@
 
         // Pausas de navegación y comunicación con el servidor
         APERTURA_DESPLEGABLE: 5000 + Math.random() * 3000,    // Espera tras hacer clic en el desplegable (Apertura)
-        ASIMILACION_DESPLEGABLE: 5000 + Math.random() * 1000, // Espera para que la web asimile de forma pasiva la planta elegida
+        ASIMILACION_DESPLEGABLE: (5000 + Math.random() * 1000) * FACTOR_SATURACION, // Espera para que la web asimile de forma pasiva la planta elegida
         RENDERIZADO_TABLA: (14000 + Math.random() * 5000) * FACTOR_SATURACION,      // Espera tras pulsar 'Mostrar' para que se dibuje la nueva tabla
         PRE_RECALCULA: 10000 + Math.random() * 20000,           // Espera tras escribir el último dato y antes de pulsar 'Recalcula'
-        POST_RECALCULA: (6000 + Math.random() * 4000) * FACTOR_SATURACION,         // Espera tras el refresco de página provocado por 'Recalcula'
+        POST_RECALCULA: (8000 + Math.random() * 8000) * FACTOR_SATURACION,         // Espera tras el refresco de página provocado por 'Recalcula'
         TRANSICION_PLANTA: (5000 + Math.random() * 4000) * FACTOR_SATURACION        // Espera informativa en ventana antes de saltar a la siguiente EDAR
         
     };
