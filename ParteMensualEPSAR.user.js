@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Parte Mensual de Analítica - EDARLab➔EPSAR - GIT
-// @version      5.3
+// @version      5.4
 // @description  Herramienta que automatiza la introducción de partes de analíticas en el portal de la EPSAR.
 // @author       Lucas B.
 // @match        https://aplica.epsar.gva.es/depuradoras/Partes/MensualAnalitica.aspx*
@@ -674,7 +674,7 @@
                                 // Si la celda ya tiene un valor y NO queremos sobreescribir, saltamos a la siguiente
                                 if (elCell.value.trim() !== "" && !modoSobreescribir) {
                                     console.log(`[EDARLab] Celda día ${day} - Columna ${k} ya tiene datos. Saltando celda.`);
-                                    await delay(CONFIG_PAUSAS.POST_CELDA());
+                                    //await delay(CONFIG_PAUSAS.POST_CELDA());
                                     estado.celdasYaTipeadasAcumuladas++;
                                     const subPorcentaje = Math.round((estado.celdasYaTipeadasAcumuladas / estado.totalCeldasGlobales) * 100);
                                     document.getElementById("rb-barra").style.width = `${subPorcentaje}%`;
