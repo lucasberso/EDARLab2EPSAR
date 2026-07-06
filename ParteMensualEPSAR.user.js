@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Parte Mensual de Analítica - EDARLab➔EPSAR - GIT
-// @version      5.4
+// @version      5.5
 // @description  Herramienta que automatiza la introducción de partes de analíticas en el portal de la EPSAR.
 // @author       Lucas B.
 // @match        https://aplica.epsar.gva.es/depuradoras/Partes/MensualAnalitica.aspx*
@@ -17,7 +17,7 @@
     // --- TABLA DE CONFIGURACIÓN DE PAUSAS ---
     // =========================================================================
     const diaDelMes = new Date().getDate();
-    const FACTOR_SATURACION = (diaDelMes >= 1 && diaDelMes <= 4) ? 1.25 : 1.25;
+    const FACTOR_SATURACION = (diaDelMes >= 1 && diaDelMes <= 4) ? 1.25 : 1.10;
 
     console.log(`[EDARLab➔EPSAR] Día del mes: ${diaDelMes}. Factor de retraso aplicado: x${FACTOR_SATURACION}`);
     const CONFIG_PAUSAS = {
@@ -27,11 +27,11 @@
         POST_DIA_FILA: (4000 + Math.random() * 3000) * FACTOR_SATURACION,  // Pausa tras rellenar una fila diaria completa
 
         // Pausas de navegación y comunicación con el servidor
-        APERTURA_DESPLEGABLE: 5000 + Math.random() * 3000,    // Espera tras hacer clic en el desplegable (Apertura)
-        ASIMILACION_DESPLEGABLE: (5000 + Math.random() * 1000) * FACTOR_SATURACION, // Espera para que la web asimile de forma pasiva la planta elegida
+        APERTURA_DESPLEGABLE: 5000 + Math.random() * 3000,                          // Espera tras hacer clic en el desplegable
+        ASIMILACION_DESPLEGABLE: (5000 + Math.random() * 1000) * FACTOR_SATURACION, // Espera para que la web asimile la planta elegida
         RENDERIZADO_TABLA: (14000 + Math.random() * 5000) * FACTOR_SATURACION,      // Espera tras pulsar 'Mostrar' para que se dibuje la nueva tabla
-        PRE_RECALCULA: 10000 + Math.random() * 20000,           // Espera tras escribir el último dato y antes de pulsar 'Recalcula'
-        POST_RECALCULA: (8000 + Math.random() * 8000) * FACTOR_SATURACION,         // Espera tras el refresco de página provocado por 'Recalcula'
+        PRE_RECALCULA: 10000 + Math.random() * 20000,                               // Espera tras escribir el último dato y antes de pulsar 'Guardar'
+        POST_RECALCULA: (8000 + Math.random() * 8000) * FACTOR_SATURACION,          // Espera tras el refresco de página provocado al guardar
         TRANSICION_PLANTA: (5000 + Math.random() * 4000) * FACTOR_SATURACION        // Espera informativa en ventana antes de saltar a la siguiente EDAR
         
     };
@@ -85,7 +85,7 @@
         el.dispatchEvent(new MouseEvent('click', { bubbles: true })); 
     
         // =========================================================================
-        // 2. LA ESCRITURA (Prepara los validadores locales de ASP.NET)
+        // --- ESCRITURA (Prepara los validadores locales de ASP.NET) ---
         // =========================================================================
         const primeraTecla = txt[0] || '';
         
@@ -101,24 +101,23 @@
         // Cierre simétrico de la tecla. Aquí la EPSAR ejecuta PuntosMiles() sobre el texto completo
         el.dispatchEvent(new KeyboardEvent('keyup', { key: primeraTecla, bubbles: true }));
         
-        // ⏳ Pausa de asentamiento: Damos ~100ms para que PuntosMiles() formatee el número
+        // Pausa de asentamiento: Damos ~100ms para que PuntosMiles() formatee el número
         await new Promise(r => setTimeout(r, 100 + Math.random() * 50)); 
         
         // =========================================================================
-        // 3. EL CIERRE Y DESENFOQUE (Guarda el dato local y dispara operaciones)
+        // --- CIERRE Y DESENFOQUE (Guarda el dato local y dispara operaciones) ---
         // =========================================================================
         // Le dice a ASP.NET: "El valor final de este campo ha cambiado formalmente"
         el.dispatchEvent(new Event("change", { bubbles: true }));
         
-        // ⏳ Brevísimo respiro de cortesía para amortiguar scripts antes de salir
+        // Pausa de cortesía para amortiguar scripts antes de salir
         await new Promise(r => setTimeout(r, 50)); 
         
         el.dispatchEvent(new Event("blur", { bubbles: true }));
         el.blur(); // Sacamos físicamente el cursor del navegador de esta celda
         
-        // ⏳ Pausa de seguridad para que la web termine los sumatorios de la fila
+        // Pausa de seguridad para que la web termine los sumatorios de la fila
         await new Promise(r => setTimeout(r, 100 + Math.random() * 50));
-        
         await new Promise(r => setTimeout(r, CONFIG_PAUSAS.POST_CELDA()));
     };
 
@@ -224,7 +223,9 @@
                     //}
                 //}
             //}
-            activarBloqueoSuspension();
+            if (estado.indiceBucleActual < window.EDARLab_Buffer.length) {
+                activarBloqueoSuspension();
+            }
             reconstruirVentanaProgresoFijaCentrada(estado);
         } else {
             crearBotonLanzador(); // En el caso de que no haya una tarea activa, devuelve el botón de inicialización.
