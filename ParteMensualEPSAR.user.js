@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Parte Mensual de Analítica - EDARLab➔EPSAR - GIT
-// @version      5.5
+// @version      5.6
 // @description  Herramienta que automatiza la introducción de partes de analíticas en el portal de la EPSAR.
 // @author       Lucas B.
 // @match        https://aplica.epsar.gva.es/depuradoras/Partes/MensualAnalitica.aspx*
@@ -223,9 +223,7 @@
                     //}
                 //}
             //}
-            if (estado.indiceBucleActual < window.EDARLab_Buffer.length) {
-                activarBloqueoSuspension();
-            }
+            activarBloqueoSuspension();
             reconstruirVentanaProgresoFijaCentrada(estado);
         } else {
             crearBotonLanzador(); // En el caso de que no haya una tarea activa, devuelve el botón de inicialización.
