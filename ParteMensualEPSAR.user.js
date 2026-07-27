@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Parte Mensual de Analítica - EDARLab➔EPSAR - GIT
-// @version      5.7
+// @version      5.8
 // @description  Herramienta que automatiza la introducción de partes de analíticas en el portal de la EPSAR.
 // @author       Lucas B.
 // @match        https://aplica.epsar.gva.es/depuradoras/Partes/MensualAnalitica.aspx*
@@ -17,13 +17,13 @@
     // --- TABLA DE CONFIGURACIÓN DE PAUSAS ---
     // =========================================================================
     const diaDelMes = new Date().getDate();
-    const FACTOR_SATURACION = (diaDelMes >= 1 && diaDelMes <= 4) ? 1.10 : 1.00;
+    const FACTOR_SATURACION = (diaDelMes >= 1 && diaDelMes <= 4) ? 1.15 : 1.05;
 
     console.log(`[EDARLab➔EPSAR] Día del mes: ${diaDelMes}. Factor de retraso aplicado: x${FACTOR_SATURACION}`);
     const CONFIG_PAUSAS = {
         // Pausas internas de escritura en tabla
         ENTRE_CARACTERES: () => (500 + Math.random() * 500) * FACTOR_SATURACION, // Retraso aleatorio entre los caracteres
-        POST_CELDA: () => (2000 + Math.random() * 4000) * FACTOR_SATURACION, // Retraso aleatorio tras desenfocar celda
+        POST_CELDA: () => (3000 + Math.random() * 4000) * FACTOR_SATURACION, // Retraso aleatorio tras desenfocar celda
         POST_DIA_FILA: (4000 + Math.random() * 3000) * FACTOR_SATURACION,  // Pausa tras rellenar una fila diaria completa
 
         // Pausas de navegación y comunicación con el servidor
