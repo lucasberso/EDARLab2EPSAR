@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Parte Mensual de Analítica - EDARLab➔EPSAR - GIT
-// @version      5.8
+// @version      6.0
 // @description  Herramienta que automatiza la introducción de partes de analíticas en el portal de la EPSAR.
 // @author       Lucas B.
 // @match        https://aplica.epsar.gva.es/depuradoras/Partes/MensualAnalitica.aspx*
@@ -23,16 +23,16 @@
     const CONFIG_PAUSAS = {
         // Pausas internas de escritura en tabla
         ENTRE_CARACTERES: () => (500 + Math.random() * 500) * FACTOR_SATURACION, // Retraso aleatorio entre los caracteres
-        POST_CELDA: () => (3000 + Math.random() * 4000) * FACTOR_SATURACION, // Retraso aleatorio tras desenfocar celda
-        POST_DIA_FILA: (4000 + Math.random() * 3000) * FACTOR_SATURACION,  // Pausa tras rellenar una fila diaria completa
+        POST_CELDA: () => (1000 + Math.random() * 1000) * FACTOR_SATURACION, // Retraso aleatorio tras desenfocar celda
+        POST_DIA_FILA: (3000 + Math.random() * 1000) * FACTOR_SATURACION,  // Pausa tras rellenar una fila diaria completa
 
         // Pausas de navegación y comunicación con el servidor
-        APERTURA_DESPLEGABLE: 5000 + Math.random() * 3000,                          // Espera tras hacer clic en el desplegable
-        ASIMILACION_DESPLEGABLE: (5000 + Math.random() * 1000) * FACTOR_SATURACION, // Espera para que la web asimile la planta elegida
-        RENDERIZADO_TABLA: (14000 + Math.random() * 5000) * FACTOR_SATURACION,      // Espera tras pulsar 'Mostrar' para que se dibuje la nueva tabla
-        PRE_RECALCULA: 10000 + Math.random() * 20000,                               // Espera tras escribir el último dato y antes de pulsar 'Guardar'
-        POST_RECALCULA: (8000 + Math.random() * 8000) * FACTOR_SATURACION,          // Espera tras el refresco de página provocado al guardar
-        TRANSICION_PLANTA: (5000 + Math.random() * 4000) * FACTOR_SATURACION        // Espera informativa en ventana antes de saltar a la siguiente EDAR
+        APERTURA_DESPLEGABLE: 4000 + Math.random() * 4000,                          // Espera tras hacer clic en el desplegable
+        ASIMILACION_DESPLEGABLE: (8000 + Math.random() * 4000) * FACTOR_SATURACION, // Espera para que la web asimile la planta elegida
+        RENDERIZADO_TABLA: (20000 + Math.random() * 5000) * FACTOR_SATURACION,      // Espera tras pulsar 'Mostrar' para que se dibuje la nueva tabla
+        PRE_RECALCULA: 20000 + Math.random() * 5000,                               // Espera tras escribir el último dato y antes de pulsar 'Guardar'
+        POST_RECALCULA: (12000 + Math.random() * 4000) * FACTOR_SATURACION,          // Espera tras el refresco de página provocado al guardar
+        TRANSICION_PLANTA: (12000 + Math.random() * 4000) * FACTOR_SATURACION        // Espera informativa en ventana antes de saltar a la siguiente EDAR
         
     };
 
@@ -767,10 +767,10 @@
             estado.pasoActual = "PREPARAR_FILTRADO";
             sessionStorage.setItem("edar_automator_state", JSON.stringify(estado));
             
-            // ejecutarMaquinaEstados(estado);
-            await delay(100 + Math.random() * 100);
-            console.log("[EDARLab] Ejecutando F5 para vaciar buffer de IIS.");
-            window.location.href = "https://aplica.epsar.gva.es/depuradoras/Partes/MensualAnalitica.aspx?res=E";
+            ejecutarMaquinaEstados(estado);
+            // await delay(100 + Math.random() * 100);
+            // console.log("[EDARLab] Ejecutando F5 para vaciar buffer de IIS.");
+            // window.location.href = "https://aplica.epsar.gva.es/depuradoras/Partes/MensualAnalitica.aspx?res=E";
             return;
         }
     }
