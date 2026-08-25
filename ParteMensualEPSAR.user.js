@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Parte Mensual de Analítica - EDARLab➔EPSAR - GIT
-// @version      6.1
+// @version      6.2
 // @description  Herramienta que automatiza la introducción de partes de analíticas en el portal de la EPSAR.
 // @author       Lucas B.
 // @match        https://aplica.epsar.gva.es/depuradoras/Partes/MensualAnalitica.aspx*
@@ -27,12 +27,12 @@
         POST_DIA_FILA: (2000 + Math.random() * 1000),  // Pausa tras rellenar una fila diaria completa
 
         // Pausas de navegación y comunicación con el servidor
-        APERTURA_DESPLEGABLE: 4000 + Math.random() * 4000 * FACTOR_SATURACION,      // Espera tras hacer clic en el desplegable
-        ASIMILACION_DESPLEGABLE: (8000 + Math.random() * 4000) * FACTOR_SATURACION, // Espera para que la web asimile la planta elegida
-        RENDERIZADO_TABLA: (20000 + Math.random() * 5000) * FACTOR_SATURACION,      // Espera tras pulsar 'Mostrar' para que se dibuje la nueva tabla
-        PRE_RECALCULA: 15000 + Math.random() * 5000 * FACTOR_SATURACION,            // Espera tras escribir el último dato y antes de pulsar 'Guardar'
-        POST_RECALCULA: (15000 + Math.random() * 5000) * FACTOR_SATURACION,         // Espera tras el refresco de página provocado al guardar
-        TRANSICION_PLANTA: (15000 + Math.random() * 5000) * FACTOR_SATURACION       // Espera informativa en ventana antes de saltar a la siguiente EDAR
+        APERTURA_DESPLEGABLE: 4000 + Math.random() * 3000 * FACTOR_SATURACION,      // Espera tras hacer clic en el desplegable
+        ASIMILACION_DESPLEGABLE: (8000 + Math.random() * 3000) * FACTOR_SATURACION, // Espera para que la web asimile la planta elegida
+        RENDERIZADO_TABLA: (30000 + Math.random() * 3000) * FACTOR_SATURACION,      // Espera tras pulsar 'Mostrar' para que se dibuje la nueva tabla
+        PRE_RECALCULA: 30000 + Math.random() * 3000 * FACTOR_SATURACION,            // Espera tras escribir el último dato y antes de pulsar 'Guardar'
+        POST_RECALCULA: (25000 + Math.random() * 3000) * FACTOR_SATURACION,         // Espera tras el refresco de página provocado al guardar
+        TRANSICION_PLANTA: (25000 + Math.random() * 3000) * FACTOR_SATURACION       // Espera informativa en ventana antes de saltar a la siguiente EDAR
         
     };
 
