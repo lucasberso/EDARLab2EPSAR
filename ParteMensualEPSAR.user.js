@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Parte Mensual de Analítica - EDARLab➔EPSAR - GIT
-// @version      6.3
+// @version      6.4
 // @description  Herramienta que automatiza la introducción de partes de analíticas en el portal de la EPSAR.
 // @author       Lucas B.
 // @match        https://aplica.epsar.gva.es/depuradoras/Partes/MensualAnalitica.aspx*
@@ -17,23 +17,23 @@
     // --- TABLA DE CONFIGURACIÓN DE PAUSAS ---
     // =========================================================================
     const diaDelMes = new Date().getDate();
-    const FACTOR_SATURACION = (diaDelMes >= 1 && diaDelMes <= 4) ? 1.15 : 1.00;
-
+    const FACTOR_SATURACION = (new Date().getDate() <= 5 && new Date().getHours() * 60 + new Date().getMinutes() >= 420 && new Date().getHours() * 60 + new Date().getMinutes() <= 900) ? 2.00 : 1.00;
+    // Factor de saturación se aplica del día 1 al 5 de cada mes en el horario de 7:00 - 15:00.
     console.log(`[EDARLab➔EPSAR] Día del mes: ${diaDelMes}. Factor de retraso aplicado: x${FACTOR_SATURACION}`);
+    
     const CONFIG_PAUSAS = {
         // Pausas internas de escritura en tabla
-        ENTRE_CARACTERES: () => (500 + Math.random() * 500) * FACTOR_SATURACION, // Retraso aleatorio entre los caracteres
+        // ENTRE_CARACTERES: () => (500 + Math.random() * 500) * FACTOR_SATURACION, // Retraso aleatorio entre los caracteres
         POST_CELDA: () => (1000 + Math.random() * 500), // Retraso aleatorio tras desenfocar celda
         POST_DIA_FILA: (2000 + Math.random() * 500),  // Pausa tras rellenar una fila diaria completa
 
         // Pausas de navegación y comunicación con el servidor
-        APERTURA_DESPLEGABLE: 4000 + Math.random() * 2000 * FACTOR_SATURACION,      // Espera tras hacer clic en el desplegable
+        APERTURA_DESPLEGABLE: (4000 + Math.random() * 2000) * FACTOR_SATURACION,      // Espera tras hacer clic en el desplegable
         ASIMILACION_DESPLEGABLE: (6000 + Math.random() * 2000) * FACTOR_SATURACION, // Espera para que la web asimile la planta elegida
         RENDERIZADO_TABLA: (25000 + Math.random() * 2000) * FACTOR_SATURACION,      // Espera tras pulsar 'Mostrar' para que se dibuje la nueva tabla
-        PRE_RECALCULA: 25000 + Math.random() * 2000 * FACTOR_SATURACION,            // Espera tras escribir el último dato y antes de pulsar 'Guardar'
+        PRE_RECALCULA: (25000 + Math.random() * 2000) * FACTOR_SATURACION,            // Espera tras escribir el último dato y antes de pulsar 'Guardar'
         POST_RECALCULA: (25000 + Math.random() * 2000) * FACTOR_SATURACION,         // Espera tras el refresco de página provocado al guardar
-        TRANSICION_PLANTA: (25000 + Math.random() * 2000) * FACTOR_SATURACION       // Espera informativa en ventana antes de saltar a la siguiente EDAR
-        
+        TRANSICION_PLANTA: (25000 + Math.random() * 2000) * FACTOR_SATURACION       // Espera informativa en ventana antes de saltar a la siguiente EDAR  
     };
 
     // --- CONFIGURACIÓN DE COLORES E INTERFAZ ---
