@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Parte Mensual de Analítica - EDARLab➔EPSAR - GIT
-// @version      6.4
+// @version      6.5
 // @description  Herramienta que automatiza la introducción de partes de analíticas en el portal de la EPSAR.
 // @author       Lucas B.
 // @match        https://aplica.epsar.gva.es/depuradoras/Partes/MensualAnalitica.aspx*
@@ -17,7 +17,7 @@
     // --- TABLA DE CONFIGURACIÓN DE PAUSAS ---
     // =========================================================================
     const diaDelMes = new Date().getDate();
-    const FACTOR_SATURACION = (new Date().getDate() <= 5 && new Date().getHours() * 60 + new Date().getMinutes() >= 420 && new Date().getHours() * 60 + new Date().getMinutes() <= 900) ? 2.00 : 1.00;
+    const FACTOR_SATURACION = (new Date().getDate() <= 5 && new Date().getHours() * 60 + new Date().getMinutes() >= 420 && new Date().getHours() * 60 + new Date().getMinutes() <= 900) ? 1.50 : 1.00;
     // Factor de saturación se aplica del día 1 al 5 de cada mes en el horario de 7:00 - 15:00.
     console.log(`[EDARLab➔EPSAR] Día del mes: ${diaDelMes}. Factor de retraso aplicado: x${FACTOR_SATURACION}`);
     
