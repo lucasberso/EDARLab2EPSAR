@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Parte Análisis en Influente - EDARLab➔EPSAR - GIT
-// @version      6.5
+// @version      6.7
 // @description  Herramienta que automatiza la introducción individualizada de partes de analíticas en el portal de la EPSAR con arquitectura modular.
 // @author       Lucas B.
 // @match        https://aplica.epsar.gva.es/depuradoras/Partes/AnalisisInfluente.aspx*
@@ -933,7 +933,19 @@
 
             let log = StateManager.getLog();
             const fechaPlanta = new Date().toLocaleTimeString();
-            log += `[${fechaPlanta}] EDAR ${candActual.nameExcel} (${nombreWebActual}) | Fecha: ${tareaActual.fecha} | Tipo: ${tareaActual.muestreo} | NNH4: ${tareaActual.valores.NNH4 || '-'} | NNO2: ${tareaActual.valores.NNO2 || '-'} | NNO3: ${tareaActual.valores.NNO3 || '-'} | NT: ${tareaActual.valores.NT || '-'} | PT: ${tareaActual.valores.PT || '-'}\n`;
+            // log += `[${fechaPlanta}] EDAR ${candActual.nameExcel} (${nombreWebActual}) | Fecha: ${tareaActual.fecha} | Tipo: ${tareaActual.muestreo} | NNH4: ${tareaActual.valores.NNH4 || '-'} | NNO2: ${tareaActual.valores.NNO2 || '-'} | NNO3: ${tareaActual.valores.NNO3 || '-'} | NT: ${tareaActual.valores.NT || '-'} | PT: ${tareaActual.valores.PT || '-'}\n`;
+            // log += `--------------------------------------------------\n\n`;
+            // 1. Mapeamos y filtramos solo los parámetros que están activos y tienen un valor asignado
+            const parametrosEscritos = ORDEN_ESCRITURA
+                .filter(k => tareaActual.valores[k + "_activo"] !== false && tareaActual.valores[k] !== undefined && tareaActual.valores[k] !== "")
+                .map(k => `${k}: ${tareaActual.valores[k]}`)
+                .join(" | ");
+            
+            // 2. Si no hubiera ninguno activo (caso extremo), indicamos que no se enviaron parámetros
+            const detalleParamsTxt = parametrosEscritos ? `| ${parametrosEscritos}` : "| Sin parámetros introducidos";
+            
+            // 3. Construimos la línea limpia del log
+            log += `[${fechaPlanta}] EDAR ${candActual.nameExcel} (${nombreWebActual}) | Fecha: ${tareaActual.fecha} | Tipo: ${tareaActual.muestreo} ${detalleParamsTxt}\n`;
             log += `--------------------------------------------------\n\n`;
 
             StateManager.setLog(log);
