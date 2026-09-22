@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Parte Análisis en Efluente - EDARLab➔EPSAR - GIT
-// @version      6.5
+// @version      6.6
 // @description  Herramienta que automatiza la introducción individualizada de partes de analíticas en el portal de la EPSAR con arquitectura modular.
 // @author       Lucas B.
 // @match        https://aplica.epsar.gva.es/depuradoras/Partes/AnalisisEfluente.aspx*
