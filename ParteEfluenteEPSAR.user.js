@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Parte Análisis en Efluente - EDARLab➔EPSAR - GIT
-// @version      6.6
+// @version      6.7
 // @description  Herramienta que automatiza la introducción individualizada de partes de analíticas en el portal de la EPSAR con arquitectura modular.
 // @author       Lucas B.
 // @match        https://aplica.epsar.gva.es/depuradoras/Partes/AnalisisEfluente.aspx*
@@ -17,7 +17,7 @@
     // --- 1. CONSTANTES, PAUSAS Y CONFIGURACIÓN ---
     // =========================================================================
     const diaDelMes = new Date().getDate();
-    const FACTOR_SATURACION = (diaDelMes >= 1 && diaDelMes <= 4) ? 2.00 : 1.0;
+    const FACTOR_SATURACION = (diaDelMes >= 1 && diaDelMes <= 4) ? 1.50 : 1.0;
 
     console.log(`[EDARLab➔EPSAR] Día del mes: ${diaDelMes}. Factor de retraso aplicado: x${FACTOR_SATURACION}`);
 
