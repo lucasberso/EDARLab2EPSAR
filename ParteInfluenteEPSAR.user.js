@@ -1,8 +1,9 @@
 // ==UserScript==
 // @name         Parte Análisis en Influente - EDARLab➔EPSAR - GIT
-// @version      6.7
+// @version      7.0
 // @description  Herramienta que automatiza la introducción individualizada de partes de analíticas en el portal de la EPSAR con arquitectura modular.
 // @author       Lucas B.
+// @copyright    2026, GLOBAL OMNIUM MEDIOAMBIENTE S.L. Todos los derechos reservados.
 // @match        https://aplica.epsar.gva.es/depuradoras/Partes/AnalisisInfluente.aspx*
 // @downloadURL  https://github.com/lucasberso/EDARLab2EPSAR/raw/refs/heads/main/ParteInfluenteEPSAR.user.js
 // @updateURL    https://github.com/lucasberso/EDARLab2EPSAR/raw/refs/heads/main/ParteInfluenteEPSAR.user.js
