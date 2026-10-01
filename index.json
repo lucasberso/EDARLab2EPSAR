@@ -1,0 +1,17 @@
+[
+  {
+    "nombre": "Parte Mensual de Analítica",
+    "matchUrl": "MensualAnalitica.aspx",
+    "scriptUrl": "https://raw.githubusercontent.com/lucasberso/EDARLab2EPSAR/main/ParteMensualEPSAR.user.js"
+  },
+  {
+    "nombre": "Análisis en Efluente",
+    "matchUrl": "AnalisisEfluente.aspx",
+    "scriptUrl": "https://raw.githubusercontent.com/lucasberso/EDARLab2EPSAR/main/ParteEfluenteEPSAR.user.js"
+  },
+  {
+    "nombre": "Análisis en Influente",
+    "matchUrl": "AnalisisInfluente.aspx",
+    "scriptUrl": "https://raw.githubusercontent.com/lucasberso/EDARLab2EPSAR/main/ParteInfluenteEPSAR.user.js"
+  }
+]
