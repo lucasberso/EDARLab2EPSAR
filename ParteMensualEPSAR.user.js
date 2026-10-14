@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Parte Mensual de Analítica - EDARLab➔EPSAR - GIT
-// @version      8.5
+// @version      8.6
 // @description  Herramienta que automatiza la introducción de partes de analíticas en el portal de la EPSAR.
 // @author       Lucas B.
 // @copyright    2026, GLOBAL OMNIUM MEDIOAMBIENTE S.L. Todos los derechos reservados.
@@ -471,7 +471,7 @@
             "                            PLATAFORMA DE AUTOMATIZACIÓN EDARLab ➔ EPSAR\n" +
             "====================================================================================================\n" +
             `Herramienta: Parte Mensual de Analítica\n` +
-            `Autor:       Lucas B.\n` +
+            `Autor:       Lucas Bernácer Soriano\n` +
             `Copyright:   GLOBAL OMNIUM MEDIOAMBIENTE S.L. \n\n` +
             "====================================================================================================\n" +
             `Fecha de ejecución:  ${fechaHoy}\n` +
