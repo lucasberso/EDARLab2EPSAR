@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Parte Mensual de Analítica - EDARLab➔EPSAR - GIT
-// @version      7.0
+// @version      7.1
 // @description  Herramienta que automatiza la introducción de partes de analíticas en el portal de la EPSAR.
 // @author       Lucas B.
 // @copyright    2026, GLOBAL OMNIUM MEDIOAMBIENTE S.L. Todos los derechos reservados.
@@ -454,7 +454,31 @@
         // Inicializamos el encabezado limpio del informe de texto plano
         const fechaHoy = new Date().toLocaleString();
         const versionScript = (typeof GM_info !== 'undefined' && GM_info.script) ? GM_info.script.version : "0.0";
-        const headerTxt = `==================================================\nREPORTE DE VOLCADO EDARLab➔EPSAR (v${versionScript})\nFecha: ${fechaHoy}\n==================================================\n\n`;
+        // const headerTxt = `==================================================\nREPORTE DE VOLCADO EDARLab➔EPSAR (v${versionScript})\nFecha: ${fechaHoy}\n==================================================\n\n`;
+        const headerTxt = 
+            `                  ###############
+                          #######################            GLOBAL OMNIUM MEDIOAMBIENTE S.L.
+                      ###########################            Plataforma de Automatización EDARLab ➔ EPSAR
+                  #####################   ###########        --------------------------------------------------
+              ################                #######        HERRAMIENTA: Parte Mensual de Analítica
+            ################                    #######      VERSIÓN:     v${versionScript}
+            ################                    #######      AUTOR:       Lucas B.
+              #################               #######        COPYRIGHT:   © Global Omnium Medioambiente. Todos los derechos reservados.
+                  ####################     ##########
+                      ###########################
+                          #######################
+                              ##############
+            
+            ====================================================================================================
+                                             INFORME DE VOLCADO DE ANALÍTICAS
+            ====================================================================================================
+            Fecha de ejecución:  ${fechaHoy}
+            Entorno objetivo:    https://aplica.epsar.gva.es/depuradoras/Partes/MensualAnalitica.aspx
+            ----------------------------------------------------------------------------------------------------
+            
+            DETALLE DE REGISTROS
+            ----------------------------------------------------------------------------------------------------
+            `;
         sessionStorage.setItem("edarlab_txt_log_accumulator", headerTxt);
         sessionStorage.setItem("edar_automator_state", JSON.stringify(nuevoEstado));
         reconstruirVentanaProgresoFijaCentrada(nuevoEstado);
