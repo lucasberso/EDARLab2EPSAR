@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Parte Mensual de Analítica - EDARLab➔EPSAR - GIT
-// @version      7.3
+// @version      7.4
 // @description  Herramienta que automatiza la introducción de partes de analíticas en el portal de la EPSAR.
 // @author       Lucas B.
 // @copyright    2026, GLOBAL OMNIUM MEDIOAMBIENTE S.L. Todos los derechos reservados.
@@ -456,32 +456,32 @@
         // const versionScript = (typeof GM_info !== 'undefined' && GM_info.script) ? GM_info.script.version : "0.0";
         // const headerTxt = `==================================================\nREPORTE DE VOLCADO EDARLab➔EPSAR (v${versionScript})\nFecha: ${fechaHoy}\n==================================================\n\n`;
         const headerTxt = 
-        `                                              0000000000000
-                                                000000000000000000000000
-                                          00000000000000000000000000000000
-                                     00000000000000000             00000000
-                                0000000000000000                     0000000
-                                0000000000000000                       000000
-                                0000000000000000                     0000000
-                                     00000000000000000             00000000
-                                          00000000000000000000000000000000
-                                                000000000000000000000000
-                                                      0000000000000
+        `                                              \n0000000000000\n
+                                                \n000000000000000000000000\n
+                                          \n00000000000000000000000000000000\n
+                                     \n00000000000000000             00000000\n
+                                \n0000000000000000                     0000000\n
+                                \n0000000000000000                       000000\n
+                                \n0000000000000000                     0000000\n
+                                     \n00000000000000000             00000000\n
+                                          \n00000000000000000000000000000000\n
+                                                \n000000000000000000000000\n
+                                                      \n0000000000000\n
         
-        ====================================================================================================
+        \n====================================================================================================\n
                                     PLATAFORMA DE AUTOMATIZACIÓN EDARLab ➔ EPSAR
-        ====================================================================================================
-        Herramienta: Parte Mensual de Analítica
-        Versión:     v7.0
-        Autor:       Lucas B.
-        Copyright:   © 2026 GLOBAL OMNIUM MEDIOAMBIENTE S.L.
-        
-        ====================================================================================================
-        Fecha de ejecución:  ${fechaHoy}
-        Entorno objetivo:    https://aplica.epsar.gva.es/depuradoras/Partes/MensualAnalitica.aspx
-        
-        DETALLE DE REGISTROS
-        ----------------------------------------------------------------------------------------------------
+        \n====================================================================================================\n
+        \nHerramienta: Parte Mensual de Analítica
+        \nVersión:     v7.0
+        \nAutor:       Lucas B.
+        \nCopyright:   GLOBAL OMNIUM MEDIOAMBIENTE S.L.
+        \n
+        \n====================================================================================================
+        \nFecha de ejecución:  ${fechaHoy}
+        \nEntorno objetivo:    https://aplica.epsar.gva.es/depuradoras/Partes/MensualAnalitica.aspx
+        \n
+        \nDETALLE DE REGISTROS
+        \n----------------------------------------------------------------------------------------------------
         `;
         sessionStorage.setItem("edarlab_txt_log_accumulator", headerTxt);
         sessionStorage.setItem("edar_automator_state", JSON.stringify(nuevoEstado));
