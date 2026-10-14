@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Parte Mensual de Analítica - EDARLab➔EPSAR - GIT
-// @version      7.5
+// @version      7.7
 // @description  Herramienta que automatiza la introducción de partes de analíticas en el portal de la EPSAR.
 // @author       Lucas B.
 // @copyright    2026, GLOBAL OMNIUM MEDIOAMBIENTE S.L. Todos los derechos reservados.
@@ -455,42 +455,33 @@
         const fechaHoy = new Date().toLocaleString();
         // const versionScript = (typeof GM_info !== 'undefined' && GM_info.script) ? GM_info.script.version : "0.0";
         // const headerTxt = `==================================================\nREPORTE DE VOLCADO EDARLab➔EPSAR (v${versionScript})\nFecha: ${fechaHoy}\n==================================================\n\n`;
-        const VERSION_SCRIPT = "7.0";
         const fechaHoy = new Date().toLocaleString();
-        
-        // Función que elimina la tabulación del editor de código manteniendo el centrado exacto del logo
-        function formatearCabecera(cadena) {
-            const lineas = cadena.split('\n');
-            return lineas.map(linea => linea.replace(/^[ \t]{8,16}/, '')).join('\n').trimStart();
-        }
-        
-        const rawHeader = `
-                                                     0000000000000
+        const rawHeader = `                                              	     0000000000000
                                                000000000000000000000000
                                          00000000000000000000000000000000
                                     00000000000000000             00000000
-                               0000000000000000                     0000000
-                               0000000000000000                       000000
-                               0000000000000000                     0000000
-                                    00000000000000000             00000000
-                                         00000000000000000000000000000000
-                                               000000000000000000000000
+                              0000000000000000                     0000000
+                             0000000000000000                       000000
+                              0000000000000000                     0000000
+                                   00000000000000000             00000000
+                                       00000000000000000000000000000000
+                                              000000000000000000000000
                                                      0000000000000
         
-        ====================================================================================================
-                                    PLATAFORMA DE AUTOMATIZACIÓN EDARLab ➔ EPSAR
-        ====================================================================================================
-        Herramienta: Parte Mensual de Analítica
-        Versión:     v${VERSION_SCRIPT}
-        Autor:       Lucas B.
-        Copyright:   GLOBAL OMNIUM MEDIOAMBIENTE S.L.
+====================================================================================================
+                            PLATAFORMA DE AUTOMATIZACIÓN EDARLab ➔ EPSAR
+====================================================================================================
+Herramienta: Parte Mensual de Analítica
+Versión:     v7.0
+Autor:       Lucas B.
+Copyright:   2026 GLOBAL OMNIUM MEDIOAMBIENTE S.L.
         
-        ====================================================================================================
-        Fecha de ejecución:  ${fechaHoy}
-        Entorno objetivo:    https://aplica.epsar.gva.es/depuradoras/Partes/MensualAnalitica.aspx
+====================================================================================================
+Fecha de ejecución:  ${fechaHoy}
+Entorno objetivo:    https://aplica.epsar.gva.es/depuradoras/Partes/MensualAnalitica.aspx
         
-        DETALLE DE REGISTROS
-        ----------------------------------------------------------------------------------------------------
+DETALLE DE REGISTROS
+----------------------------------------------------------------------------------------------------
         `;
         
         const headerTxt = formatearCabecera(rawHeader);
