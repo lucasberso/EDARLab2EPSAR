@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Parte Mensual de Analítica - EDARLab➔EPSAR - GIT
-// @version      7.7
+// @version      7.8
 // @description  Herramienta que automatiza la introducción de partes de analíticas en el portal de la EPSAR.
 // @author       Lucas B.
 // @copyright    2026, GLOBAL OMNIUM MEDIOAMBIENTE S.L. Todos los derechos reservados.
@@ -457,34 +457,34 @@
         // const headerTxt = `==================================================\nREPORTE DE VOLCADO EDARLab➔EPSAR (v${versionScript})\nFecha: ${fechaHoy}\n==================================================\n\n`;
         const fechaHoy = new Date().toLocaleString();
         const rawHeader = `                                              	     0000000000000
-                                               000000000000000000000000
-                                         00000000000000000000000000000000
-                                    00000000000000000             00000000
-                              0000000000000000                     0000000
-                             0000000000000000                       000000
-                              0000000000000000                     0000000
-                                   00000000000000000             00000000
-                                       00000000000000000000000000000000
-                                              000000000000000000000000
-                                                     0000000000000
+                                                       000000000000000000000000
+                                                 00000000000000000000000000000000
+                                            00000000000000000             00000000
+                                      0000000000000000                     0000000
+                                     0000000000000000                       000000
+                                      0000000000000000                     0000000
+                                           00000000000000000             00000000
+                                               00000000000000000000000000000000
+                                                      000000000000000000000000
+                                                             0000000000000
+                
+        ====================================================================================================
+                                    PLATAFORMA DE AUTOMATIZACIÓN EDARLab ➔ EPSAR
+        ====================================================================================================
+        Herramienta: Parte Mensual de Analítica
+        Versión:     v7.0
+        Autor:       Lucas B.
+        Copyright:   2026 GLOBAL OMNIUM MEDIOAMBIENTE S.L.
+                
+        ====================================================================================================
+        Fecha de ejecución:  ${fechaHoy}
+        Entorno objetivo:    https://aplica.epsar.gva.es/depuradoras/Partes/MensualAnalitica.aspx
+                
+        DETALLE DE REGISTROS
+        ----------------------------------------------------------------------------------------------------
+                `;
         
-====================================================================================================
-                            PLATAFORMA DE AUTOMATIZACIÓN EDARLab ➔ EPSAR
-====================================================================================================
-Herramienta: Parte Mensual de Analítica
-Versión:     v7.0
-Autor:       Lucas B.
-Copyright:   2026 GLOBAL OMNIUM MEDIOAMBIENTE S.L.
-        
-====================================================================================================
-Fecha de ejecución:  ${fechaHoy}
-Entorno objetivo:    https://aplica.epsar.gva.es/depuradoras/Partes/MensualAnalitica.aspx
-        
-DETALLE DE REGISTROS
-----------------------------------------------------------------------------------------------------
-        `;
-        
-        const headerTxt = formatearCabecera(rawHeader);
+        const headerTxt = rawHeader;
         sessionStorage.setItem("edarlab_txt_log_accumulator", headerTxt);
         sessionStorage.setItem("edar_automator_state", JSON.stringify(nuevoEstado));
         reconstruirVentanaProgresoFijaCentrada(nuevoEstado);
