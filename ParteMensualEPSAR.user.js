@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Parte Mensual de Analítica - EDARLab➔EPSAR - GIT
-// @version      8.4
+// @version      8.5
 // @description  Herramienta que automatiza la introducción de partes de analíticas en el portal de la EPSAR.
 // @author       Lucas B.
 // @copyright    2026, GLOBAL OMNIUM MEDIOAMBIENTE S.L. Todos los derechos reservados.
@@ -454,27 +454,25 @@
         // Inicializamos el encabezado limpio del informe de texto plano
         // const versionScript = (typeof GM_info !== 'undefined' && GM_info.script) ? GM_info.script.version : "0.0";
         // const headerTxt = `==================================================\nREPORTE DE VOLCADO EDARLab➔EPSAR (v${versionScript})\nFecha: ${fechaHoy}\n==================================================\n\n`;
-        const VERSION_SCRIPT = "7.3";
         const fechaHoy = new Date().toLocaleString();
         const headerTxt = 
-            "                                     0000000000000\n" +
-            "                               000000000000000000000000\n" +
-            "                         00000000000000000000000000000000\n" +
-            "                    00000000000000000             00000000\n" +
-            "               0000000000000000                     0000000\n" +
-            "               0000000000000000                       000000\n" +
-            "               0000000000000000                     0000000\n" +
-            "                    00000000000000000             00000000\n" +
-            "                         00000000000000000000000000000000\n" +
-            "                               000000000000000000000000\n" +
-            "                                     0000000000000\n\n" +
+            "                                                 0000000000000\n" +
+            "                                           000000000000000000000000\n" +
+            "                                     00000000000000000000000000000000\n" +
+            "                                00000000000000000             00000000\n" +
+            "                           0000000000000000                     0000000\n" +
+            "                           0000000000000000                       000000\n" +
+            "                           0000000000000000                     0000000\n" +
+            "                                00000000000000000             00000000\n" +
+            "                                     00000000000000000000000000000000\n" +
+            "                                           000000000000000000000000\n" +
+            "                                                 0000000000000\n\n" +
             "====================================================================================================\n" +
             "                            PLATAFORMA DE AUTOMATIZACIÓN EDARLab ➔ EPSAR\n" +
             "====================================================================================================\n" +
             `Herramienta: Parte Mensual de Analítica\n` +
-            `Versión:     v${VERSION_SCRIPT}\n` +
             `Autor:       Lucas B.\n` +
-            `Copyright:   © 2026 GLOBAL OMNIUM MEDIOAMBIENTE S.L. Todos los derechos reservados.\n\n` +
+            `Copyright:   GLOBAL OMNIUM MEDIOAMBIENTE S.L. \n\n` +
             "====================================================================================================\n" +
             `Fecha de ejecución:  ${fechaHoy}\n` +
             "Entorno objetivo:    https://aplica.epsar.gva.es/depuradoras/Partes/MensualAnalitica.aspx\n\n" +
