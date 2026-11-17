@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Parte Mensual de Analítica - EDARLab➔EPSAR - GIT
-// @version      8.6
+// @version      8.7
 // @description  Herramienta que automatiza la introducción de partes de analíticas en el portal de la EPSAR.
 // @author       Lucas B.
 // @copyright    2026, GLOBAL OMNIUM MEDIOAMBIENTE S.L. Todos los derechos reservados.
@@ -146,6 +146,53 @@
     //};
 
     const delay = ms => new Promise(res => setTimeout(res, ms));
+
+    // --- TELEMETRÍA ANÓNIMA DE USO ---
+    const TELEMETRY_URL = "https://script.google.com/macros/s/AKfycbw9TXrrD1JweF4qWScVRvYtNAIks4wy9QMxitU2BPKLTMMZ-q7aeFU1A32osVMqUZkJng/exec";
+
+    function obtenerIdInstalacion() {
+        let id = localStorage.getItem("edarlab_client_id");
+        if (!id) {
+            id = "usr_" + Math.random().toString(36).substring(2, 10) + Date.now().toString(36);
+            localStorage.setItem("edarlab_client_id", id);
+        }
+        return id;
+    }
+    
+    function obtenerUsuarioEPSAR() {
+        const el = document.getElementById("ctl00_LabelUsuario");
+        if (el && el.innerText) {
+            // Quita "Usuario:" y espacios extra para dejar solo "bcamp"
+            return el.innerText.replace(/^Usuario:\s*/i, "").trim();
+        }
+        // Respaldo por si en alguna recarga o error de sesión no aparece el span
+        let idFallback = localStorage.getItem("edarlab_client_id");
+        if (!idFallback) {
+            idFallback = "usr_" + Math.random().toString(36).substring(2, 8);
+            localStorage.setItem("edarlab_client_id", idFallback);
+        }
+        return idFallback;
+    }
+    
+    function enviarMetrica(evento, datosExtra = {}) {
+        if (!TELEMETRY_URL || TELEMETRY_URL.includes("PEGA_AQUI")) return;
+
+        const payload = {
+            fecha: new Date().toISOString(),
+            usuario: obtenerUsuarioEPSAR(), // Enviará "bcamp"
+            origen: (typeof GM_info !== "undefined") ? "Tampermonkey" : "Extension_Local",
+            version: (typeof GM_info !== "undefined" && GM_info.script) ? GM_info.script.version : "8.6",
+            evento: evento,
+            ...datosExtra
+        };
+
+        fetch(TELEMETRY_URL, {
+            method: "POST",
+            mode: "no-cors",
+            keepalive: true,
+            body: JSON.stringify(payload)
+        }).catch(() => {});
+    }
 
     // --- FUNCIÓN DE EMPAREJAMIENTO CON EL DESPLEGABLE DE LA WEB ---
     function buscarMejorCoincidenciaWeb(nombreExcel) {
@@ -427,7 +474,11 @@
         activarBloqueoSuspension();
         let totalActivas = 0;
         let totalCeldasCola = 0;
-
+        enviarMetrica("INICIO_LOTE", {
+            partesSeleccionados: totalActivas,
+            celdasTotales: totalCeldasCola,
+            sobreescribir: sessionStorage.getItem("edarlab_sobreescribir") === "true"
+        });
         window.EDARLab_Buffer.forEach(c => {
             if (c.procesar === true) {
                 totalActivas++;
@@ -565,6 +616,10 @@
         if (estado.indiceBucleActual >= window.EDARLab_Buffer.length) {
             console.log("[EDARLab➔EPSAR] Ejecución finalizada con éxito.");
             sessionStorage.removeItem("edar_automator_state");
+            enviarMetrica("FIN_EXITO", {
+                partesCompletados: estado.totalInicialActivas,
+                celdasVolcadas: estado.totalCeldasGlobales
+            });
             sonarAlertaFin();
             document.getElementById("rb-barra").style.width = "100%";
             document.getElementById("tx-porcentaje").innerText = `100% Celdas volcadas (${estado.totalCeldasGlobales} de ${estado.totalCeldasGlobales})`;
