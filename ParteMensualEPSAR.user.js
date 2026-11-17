@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Parte Mensual de Analítica - EDARLab➔EPSAR - GIT
-// @version      8.8
+// @version      8.9
 // @description  Herramienta que automatiza la introducción de partes de analíticas en el portal de la EPSAR.
 // @author       Lucas B.
 // @copyright    2026, GLOBAL OMNIUM MEDIOAMBIENTE S.L. Todos los derechos reservados.
@@ -160,12 +160,26 @@
     }
     
     function obtenerUsuarioEPSAR() {
-        const el = document.getElementById("ctl00_LabelUsuario");
-        if (el && el.innerText) {
-            // Quita "Usuario:" y espacios extra para dejar solo "bcamp"
-            return el.innerText.replace(/^Usuario:\s*/i, "").trim();
+        // 1. Busca en la página actual
+        let el = document.getElementById("ctl00_LabelUsuario") || document.querySelector(".label_usuario");
+        
+        // 2. Si no está, busca dentro de los iframes de la página
+        if (!el) {
+            const iframes = document.querySelectorAll("iframe");
+            for (const frame of iframes) {
+                try {
+                    el = frame.contentDocument?.getElementById("ctl00_LabelUsuario") || frame.contentDocument?.querySelector(".label_usuario");
+                    if (el) break;
+                } catch (e) {}
+            }
         }
-        // Respaldo por si en alguna recarga o error de sesión no aparece el span
+
+        if (el && el.textContent) {
+            const limpio = el.textContent.replace(/^Usuario:\s*/i, "").trim();
+            if (limpio) return limpio;
+        }
+
+        // Respaldo si realmente no existe en el DOM
         let idFallback = localStorage.getItem("edarlab_client_id");
         if (!idFallback) {
             idFallback = "usr_" + Math.random().toString(36).substring(2, 8);
