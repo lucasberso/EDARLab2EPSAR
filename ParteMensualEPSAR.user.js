@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Parte Mensual de Analítica - EDARLab➔EPSAR - GIT
-// @version      8.10
+// @version      8.11
 // @description  Herramienta que automatiza la introducción de partes de analíticas en el portal de la EPSAR.
 // @author       Lucas B.
 // @copyright    2026, GLOBAL OMNIUM MEDIOAMBIENTE S.L. Todos los derechos reservados.
@@ -208,7 +208,12 @@
             body: JSON.stringify(payload)
         }).catch(() => {});
     }
-
+    function obtenerPlantasSeleccionadas() {
+        return (window.EDARLab_Buffer || [])
+            .filter(c => c.procesar === true)
+            .map(c => (c.nameWebAsociada && c.nameWebAsociada !== "NO ASOCIADA") ? c.nameWebAsociada : c.nameExcel)
+            .join(", ");
+    }
     // --- FUNCIÓN DE EMPAREJAMIENTO CON EL DESPLEGABLE DE LA WEB ---
     function buscarMejorCoincidenciaWeb(nombreExcel) {
         const r = document.getElementById("ctl00_ctl00_ContentPlaceHolder1_DropDownFiltroUnidadCoste");
@@ -517,7 +522,8 @@
         enviarMetrica("INICIO_LOTE", {
             partesSeleccionados: totalActivas,
             celdasTotales: totalCeldasCola,
-            sobreescribir: sessionStorage.getItem("edarlab_sobreescribir") === "true"
+            sobreescribir: sessionStorage.getItem("edarlab_sobreescribir") === "true",
+            plantas: obtenerPlantasSeleccionadas()
         });
         
         // Inicializamos el encabezado limpio del informe de texto plano
@@ -636,7 +642,8 @@
             sessionStorage.removeItem("edar_automator_state");
             enviarMetrica("FIN_EXITO", {
                 partesCompletados: estado.totalInicialActivas,
-                celdasVolcadas: estado.totalCeldasGlobales
+                celdasVolcadas: estado.totalCeldasGlobales,
+                plantas: obtenerPlantasSeleccionadas()
             });
             sonarAlertaFin();
             document.getElementById("rb-barra").style.width = "100%";
