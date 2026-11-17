@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Parte Mensual de Analítica - EDARLab➔EPSAR - GIT
-// @version      8.9
+// @version      8.10
 // @description  Herramienta que automatiza la introducción de partes de analíticas en el portal de la EPSAR.
 // @author       Lucas B.
 // @copyright    2026, GLOBAL OMNIUM MEDIOAMBIENTE S.L. Todos los derechos reservados.
@@ -489,11 +489,7 @@
         activarBloqueoSuspension();
         let totalActivas = 0;
         let totalCeldasCola = 0;
-        enviarMetrica("INICIO_LOTE", {
-            partesSeleccionados: totalActivas,
-            celdasTotales: totalCeldasCola,
-            sobreescribir: sessionStorage.getItem("edarlab_sobreescribir") === "true"
-        });
+        
         window.EDARLab_Buffer.forEach(c => {
             if (c.procesar === true) {
                 totalActivas++;
@@ -505,7 +501,7 @@
             alert("Selecciona al menos una EDAR en la tabla.");
             return;
         }
-
+        
         console.log(`[EDARLab➔EPSAR] Lanzando ejecución. Celdas totales a rellenar: ${totalCeldasCola}`);
 
         const nuevoEstado = {
@@ -517,6 +513,13 @@
             pasoActual: "PREPARAR_FILTRADO",
             abortar: false
         };
+
+        enviarMetrica("INICIO_LOTE", {
+            partesSeleccionados: totalActivas,
+            celdasTotales: totalCeldasCola,
+            sobreescribir: sessionStorage.getItem("edarlab_sobreescribir") === "true"
+        });
+        
         // Inicializamos el encabezado limpio del informe de texto plano
         // const versionScript = (typeof GM_info !== 'undefined' && GM_info.script) ? GM_info.script.version : "0.0";
         // const headerTxt = `==================================================\nREPORTE DE VOLCADO EDARLab➔EPSAR (v${versionScript})\nFecha: ${fechaHoy}\n==================================================\n\n`;
