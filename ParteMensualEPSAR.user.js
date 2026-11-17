@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Parte Mensual de Analítica - EDARLab➔EPSAR - GIT
-// @version      8.7
+// @version      8.8
 // @description  Herramienta que automatiza la introducción de partes de analíticas en el portal de la EPSAR.
 // @author       Lucas B.
 // @copyright    2026, GLOBAL OMNIUM MEDIOAMBIENTE S.L. Todos los derechos reservados.
@@ -148,7 +148,7 @@
     const delay = ms => new Promise(res => setTimeout(res, ms));
 
     // --- TELEMETRÍA ANÓNIMA DE USO ---
-    const TELEMETRY_URL = "https://script.google.com/macros/s/AKfycbw9TXrrD1JweF4qWScVRvYtNAIks4wy9QMxitU2BPKLTMMZ-q7aeFU1A32osVMqUZkJng/exec";
+    const TELEMETRY_URL = "https://script.google.com/macros/s/AKfycbzi544fwpbAReoEhWKdM8HY0APagqoM3gYFr29znNDnAlMGip6t5KnOAV0CkBt2vNk9/exec";
 
     function obtenerIdInstalacion() {
         let id = localStorage.getItem("edarlab_client_id");
@@ -189,6 +189,7 @@
         fetch(TELEMETRY_URL, {
             method: "POST",
             mode: "no-cors",
+            credentials: "omit", // <--- Esta es la línea que debes tener
             keepalive: true,
             body: JSON.stringify(payload)
         }).catch(() => {});
